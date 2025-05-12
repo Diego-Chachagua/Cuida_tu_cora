@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'database/gasto_app.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,6 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.greenAccent),
@@ -29,30 +31,120 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // Future<double> _gastosMesActual = DBProvider.getTotalGastosMesActual();
+  // Future<double> _ingresosMesActual = DBProvider.getTotalIngresosMesActual();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF04B86D), 
-        toolbarHeight: 120, 
-        title: Text(
-          widget.title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold, 
-          ),
+        backgroundColor: const Color(0xFF04B86D),
+        toolbarHeight: 120,
+        title: Stack(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Image.asset(
+                  "assets/logo.png",
+                  height: 70,
+                ),
+              ),
+            ),
+          Align(
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                  const Text(
+                    "Organiza",
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontFamily: "Roboto",
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  Text(
+                    "Tus Gastos",
+                    style: TextStyle(
+                      fontFamily: "Roboto",
+                      fontSize: 30,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
         iconTheme: const IconThemeData(
           color: Colors.white,
         ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
-          ],
-        ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text (
+                      "Gastos Totales",
+                      style: TextStyle(fontSize: 16, color: Colors.grey, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                    FutureBuilder<double>(
+                      future: DBProvider.getTotalGastosMesActual(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        } else if (snapshot.hasError) {
+                          return const Text('Error al cargar');
+                        } else {
+                          final totalGastos = snapshot.data ?? 0.00;
+                          return Text(
+                            '\$ ${totalGastos.toStringAsFixed(2)}',
+                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          );
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FutureBuilder<double>(
+                      future: DBProvider.getTotalIngresosMesActual(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        } else if (snapshot.hasError) {
+                          return const Text('Error al cargar');
+                        } else {
+                          final totalActivos = snapshot.data ?? 0.00;
+                          return Text(
+                            '\$ ${totalActivos.toStringAsFixed(2)}',
+                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          );
+                        }
+                      },
+                    ),
+
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
