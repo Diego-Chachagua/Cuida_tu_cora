@@ -198,7 +198,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-
+        //Lista de los gastos
         Expanded( 
             child: FutureBuilder<List<Map<String, dynamic>>>(
               future: DBProvider.getListaGastosDelMesActual(),
