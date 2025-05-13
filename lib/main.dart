@@ -31,9 +31,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // Future<double> _gastosMesActual = DBProvider.getTotalGastosMesActual();
-  // Future<double> _ingresosMesActual = DBProvider.getTotalIngresosMesActual();
-
+  // ignore: prefer_final_fields
+  Future<double> _gastosMesActual = DBProvider.getTotalGastosMesActual();
+  // ignore: prefer_final_fields
+  Future<double> _ingresoMesActual = DBProvider.getTotalIngresosMesActual();
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,29 +103,36 @@ class _MyHomePageState extends State<MyHomePage> {
                       style: TextStyle(fontSize: 16, color: Colors.grey, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
+
                     FutureBuilder<double>(
-                      future: DBProvider.getTotalGastosMesActual(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
+                      future: _gastosMesActual,
+                      builder: (context, snapshot){
+                        if (snapshot.connectionState == ConnectionState.waiting){
                           return const CircularProgressIndicator();
-                        } else if (snapshot.hasError) {
-                          return const Text('Error al cargar');
+                        } else if(snapshot.hasError) {
+                          return const Text("Error al cargar");
                         } else {
                           final totalGastos = snapshot.data ?? 0.00;
                           return Text(
-                            '\$ ${totalGastos.toStringAsFixed(2)}',
+                            "\$ ${totalGastos.toStringAsFixed(2)}",
                             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                           );
                         }
-                      },
+                      }
                     ),
                   ],
                 ),
+                const SizedBox(width: 4),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const Text (
+                      "Activos",
+                      style: TextStyle(fontSize: 16, color: Colors.grey, fontWeight: FontWeight.bold),
+                  ),
+                    const SizedBox(height: 4),
                     FutureBuilder<double>(
-                      future: DBProvider.getTotalIngresosMesActual(),
+                      future: _ingresoMesActual,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return const CircularProgressIndicator();
@@ -133,17 +142,122 @@ class _MyHomePageState extends State<MyHomePage> {
                           final totalActivos = snapshot.data ?? 0.00;
                           return Text(
                             '\$ ${totalActivos.toStringAsFixed(2)}',
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                          );
+                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),                            );
                         }
                       },
-                    ),
-
+                    ),  
                   ],
                 ),
               ],
             ),
           ),
+          const SizedBox(height: 16),
+
+          const Divider(
+            color: Colors.grey,
+            thickness: 2,
+            indent: 40,
+            endIndent: 40,
+          ),
+
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Gastos",
+                        style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 4),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () {  
+                      },
+                      child: const Text(
+                        "Ver todos",
+                        style: 
+                        TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          decoration: TextDecoration.underline,
+                          decorationThickness: 2,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+        Expanded( 
+            child: FutureBuilder<List<Map<String, dynamic>>>(
+              future: DBProvider.getListaGastosDelMesActual(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error al cargar los gastos: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('No hay gastos registrados este mes.'));
+                } else {
+                  final listaGastos = snapshot.data!;
+                  return ListView.builder(
+                    itemCount: listaGastos.length,
+                    itemBuilder: (context, index) {
+                      final gasto = listaGastos[index];
+                      final fechaRaw = DateTime.parse(gasto['fecha_gasto'] as String);
+                      final formatoFecha = "${fechaRaw.day}/${fechaRaw.month}/${fechaRaw.year}";
+
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 8.0),
+                        child: Row(
+                          children: [
+                            const CircleAvatar(
+                              backgroundColor: Colors.grey,
+                              radius: 20,
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    gasto['nom_gasto'] ?? 'Gasto',
+                                    style:
+                                        const TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    formatoFecha,
+                                    style: const TextStyle(color: Colors.grey),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Text(
+                              '\$${(gasto['monto_gasto'] as double).toStringAsFixed(2)}',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
+            ),
+          ),
+          const SizedBox(height: 60),
         ],
       ),
     );
