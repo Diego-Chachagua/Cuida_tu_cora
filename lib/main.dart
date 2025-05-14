@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'database/gasto_app.dart';
+import 'package:cuida_tu_cora/database/p_inicio.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,10 +34,35 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   // ignore: prefer_final_fields
-  Future<double> _gastosMesActual = DBProvider.getTotalGastosMesActual();
+  Future<double> _gastosMesActual = PInicialQueries.getTotalGastosMesActual();
   // ignore: prefer_final_fields
-  Future<double> _ingresoMesActual = DBProvider.getTotalIngresosMesActual();
+  Future<double> _ingresoMesActual = PInicialQueries.getTotalIngresosMesActual();
+  bool _mostrarBotonesFlotantes = false;
   
+  String _obtenerMesAnioActual() {
+    final now = DateTime.now();
+    final formatoMesAnio = "${_obtenerNombreMes(now.month)} - ${now.year}";
+    return formatoMesAnio;
+  }
+
+  String _obtenerNombreMes(int mes) {
+    switch (mes) {
+      case 1: return 'Enero';
+      case 2: return 'Febrero';
+      case 3: return 'Marzo';
+      case 4: return 'Abril';
+      case 5: return 'Mayo';
+      case 6: return 'Junio';
+      case 7: return 'Julio';
+      case 8: return 'Agosto';
+      case 9: return 'Septiembre';
+      case 10: return 'Octubre';
+      case 11: return 'Noviembre';
+      case 12: return 'Diciembre';
+      default: return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -198,10 +225,23 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Text(
+                  _obtenerMesAnioActual(),
+                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+
         //Lista de los gastos
         Expanded( 
             child: FutureBuilder<List<Map<String, dynamic>>>(
-              future: DBProvider.getListaGastosDelMesActual(),
+              future: PInicialQueries.getListaGastosDelMesActual(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -215,19 +255,77 @@ class _MyHomePageState extends State<MyHomePage> {
                     itemCount: listaGastos.length,
                     itemBuilder: (context, index) {
                       final gasto = listaGastos[index];
-                      final fechaRaw = DateTime.parse(gasto['fecha_gasto'] as String);
-                      final formatoFecha = "${fechaRaw.day}/${fechaRaw.month}/${fechaRaw.year}";
-
+                      String iconoNombre = "";
+                      switch (gasto['nom_gasto']?.toLowerCase()) {
+                        case 'comida':
+                          iconoNombre = 'assets/comida.svg';
+                          break;
+                        case 'educación':
+                          iconoNombre = 'assets/educacion.svg';
+                          break;
+                        case 'agua':
+                          iconoNombre = 'assets/servicio_agua.svg';
+                          break;
+                        case 'luz':
+                          iconoNombre = 'assets/servicio_luz.svg';
+                          break;
+                        case 'transporte':
+                          iconoNombre = 'assets/transporte.svg';
+                          break;
+                        case 'internet':
+                          iconoNombre = 'assets/internet.svg';
+                          break;
+                        case 'auto':
+                          iconoNombre = "assets/auto.svg";
+                        case 'comunicacion':
+                          iconoNombre = "assets/comunicacion.svg";
+                        case 'deporte':
+                          iconoNombre = "assets/deporte.svg";
+                        case 'eletronica':
+                          iconoNombre = "assets/electronica.svg";
+                        case 'entretenimiento':
+                          iconoNombre = "assets/entretenimiento.svg";
+                        case 'hijos':
+                          iconoNombre = "assets/hijos.svg";
+                        case 'mascota':
+                          iconoNombre = "assets/mascota.svg";
+                        case 'regalo':
+                          iconoNombre = "assets/regalo.svg";
+                        case 'reparaciones':
+                          iconoNombre = "assets/reparaciones.svg";
+                        case 'ropa':
+                          iconoNombre = "assets/ropa.svg";
+                        case 'salud':
+                          iconoNombre = "assets/salud.svg";
+                        case 'trabajo':
+                          iconoNombre = "assets/trabajo.svg";
+                        case 'viaje':
+                          iconoNombre = "assets/viaje.svg";
+                        default:
+                          iconoNombre = 'assets/otro.svg';
+                          break;
+                      }
                       return Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16.0, vertical: 8.0),
                         child: Row(
                           children: [
-                            const CircleAvatar(
-                              backgroundColor: Colors.grey,
-                              radius: 20,
+                            Padding(
+                              padding: const EdgeInsets.only(right: 16.0),
+                              child: SizedBox(
+                                height: 30, // Ajusta el tamaño del contenedor del icono
+                                width: 30,
+                                child: iconoNombre.endsWith('.svg')
+                                    ? SvgPicture.asset(
+                                        iconoNombre,
+                                      )
+                                    : (iconoNombre.isNotEmpty
+                                        ? Image.asset(
+                                            iconoNombre,
+                                          )
+                                        : const Icon(Icons.category, color: Colors.grey)), // Icono por defecto si no hay imagen
+                              ),
                             ),
-                            const SizedBox(width: 16),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -238,9 +336,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                         const TextStyle(fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                    formatoFecha,
-                                    style: const TextStyle(color: Colors.grey),
-                                  ),
+                                    gasto['desc_gasto'] ?? 'Descripción del gasto', // Asegúrate de que 'desc_gasto' esté disponible
+                                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                  )
                                 ],
                               ),
                             ),
@@ -255,6 +353,33 @@ class _MyHomePageState extends State<MyHomePage> {
                   );
                 }
               },
+            ),
+          ),
+          const SizedBox(height: 60),
+          Padding( // Nueva Row para los botones inferiores
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    // Lógica para actualizar la lista
+                    setState(() {
+                      _gastosMesActual = PInicialQueries.getTotalGastosMesActual();
+                      _ingresoMesActual = PInicialQueries.getTotalIngresosMesActual();
+                    });
+                  },
+                  child: const Text('Actualizar'),
+                ),
+                FloatingActionButton(
+                  onPressed: () {
+                    setState(() {
+                      _mostrarBotonesFlotantes = !_mostrarBotonesFlotantes;
+                    });
+                  },
+                  child: const Icon(Icons.add), // Usamos el icono de "add" que se parece a una cruz al rotarlo
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 60),
