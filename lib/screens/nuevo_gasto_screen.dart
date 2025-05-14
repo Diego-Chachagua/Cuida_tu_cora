@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors_in_immutables, prefer_final_fields, sort_child_properties_last
+
 import 'package:flutter/material.dart';
 import 'package:cuida_tu_cora/database/gasto_app.dart';
 import 'package:cuida_tu_cora/database/bd_nuevogasto.dart'; // Importa tu nuevo helper

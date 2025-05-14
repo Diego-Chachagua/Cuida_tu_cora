@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cuida_tu_cora/database/p_inicio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'screens/gastos_screens.dart';
+import 'screens/nuevo_gasto_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -406,7 +407,12 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: EdgeInsets.only(bottom: screenHeight * 0.18, right: screenWidth * 0.02),
               child: FloatingActionButton.extended(
                 heroTag: 'gastoBtn',
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => NuevoGastoScreen()),
+                        );
+                },
                 label: Text('Gastos', style: TextStyle(fontSize: isTablet ? 18 : 16)),
                 icon: const Icon(Icons.arrow_downward),
               ),
