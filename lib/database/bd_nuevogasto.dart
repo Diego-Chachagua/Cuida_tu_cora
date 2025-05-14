@@ -1,4 +1,3 @@
-import 'package:sqflite/sqflite.dart';
 import 'gasto_app.dart'; // Importa tu DBProvider
 
 class NuevoGastoDBHelper {
