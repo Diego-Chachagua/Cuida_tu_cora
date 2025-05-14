@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:cuida_tu_cora/database/p_inicio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'screens/gastos_screens.dart';
 
 void main() {
   runApp(const MyApp());
@@ -211,7 +212,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => GastosScreen()),
+                        );
+                      },
                       child: Text(
                         "Ver todos",
                         style: TextStyle(
