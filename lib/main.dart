@@ -1,5 +1,6 @@
+// ignore_for_file: prefer_final_fields
+
 import 'package:flutter/material.dart';
-import 'database/gasto_app.dart';
 import 'package:cuida_tu_cora/database/p_inicio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -33,12 +34,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // ignore: prefer_final_fields
   Future<double> _gastosMesActual = PInicialQueries.getTotalGastosMesActual();
-  // ignore: prefer_final_fields
   Future<double> _ingresoMesActual = PInicialQueries.getTotalIngresosMesActual();
   bool _mostrarBotonesFlotantes = false;
-  
+
   String _obtenerMesAnioActual() {
     final now = DateTime.now();
     final formatoMesAnio = "${_obtenerNombreMes(now.month)} - ${now.year}";
@@ -65,43 +64,47 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isTablet = screenWidth > 600;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF04B86D),
-        toolbarHeight: 120,
+        toolbarHeight: isTablet ? 140 : 120,
         title: Stack(
           children: [
             Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: const EdgeInsets.only(left: 16.0),
+                padding: EdgeInsets.only(left: screenWidth * 0.04),
                 child: Image.asset(
                   "assets/logo.png",
-                  height: 70,
+                  height: isTablet ? 80 : 70,
                 ),
               ),
             ),
-          Align(
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                  const Text(
+            Align(
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
                     "Organiza",
                     style: TextStyle(
-                      fontSize: 30,
+                      fontSize: isTablet ? 36 : 30,
                       fontFamily: "Roboto",
                       color: Colors.white,
-                      fontWeight: FontWeight.bold
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 8.0),
+                  SizedBox(height: screenHeight * 0.01),
                   Text(
                     "Tus Gastos",
                     style: TextStyle(
                       fontFamily: "Roboto",
-                      fontSize: 30,
+                      fontSize: isTablet ? 36 : 30,
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -118,103 +121,103 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(screenWidth * 0.04),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text (
-                      "Gastos Totales",
-                      style: TextStyle(fontSize: 16, color: Colors.grey, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 4),
-
-                    FutureBuilder<double>(
-                      future: _gastosMesActual,
-                      builder: (context, snapshot){
-                        if (snapshot.connectionState == ConnectionState.waiting){
-                          return const CircularProgressIndicator();
-                        } else if(snapshot.hasError) {
-                          return const Text("Error al cargar");
-                        } else {
-                          final totalGastos = snapshot.data ?? 0.00;
-                          return Text(
-                            "\$ ${totalGastos.toStringAsFixed(2)}",
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                          );
-                        }
-                      }
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 4),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text (
-                      "Activos",
-                      style: TextStyle(fontSize: 16, color: Colors.grey, fontWeight: FontWeight.bold),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Gastos Totales",
+                        style: TextStyle(fontSize: isTablet ? 18 : 16, color: Colors.grey, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: screenHeight * 0.005),
+                      FutureBuilder<double>(
+                        future: _gastosMesActual,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return const Text("Error al cargar");
+                          } else {
+                            final totalGastos = snapshot.data ?? 0.00;
+                            return Text(
+                              "\$ ${totalGastos.toStringAsFixed(2)}",
+                              style: TextStyle(fontSize: isTablet ? 24 : 20, fontWeight: FontWeight.bold),
+                            );
+                          }
+                        },
+                      ),
+                    ],
                   ),
-                    const SizedBox(height: 4),
-                    FutureBuilder<double>(
-                      future: _ingresoMesActual,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
-                        } else if (snapshot.hasError) {
-                          return const Text('Error al cargar');
-                        } else {
-                          final totalActivos = snapshot.data ?? 0.00;
-                          return Text(
-                            '\$ ${totalActivos.toStringAsFixed(2)}',
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),                            );
-                        }
-                      },
-                    ),  
-                  ],
+                ),
+                SizedBox(width: screenWidth * 0.02),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Activos",
+                        style: TextStyle(fontSize: isTablet ? 18 : 16, color: Colors.grey, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: screenHeight * 0.005),
+                      FutureBuilder<double>(
+                        future: _ingresoMesActual,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return const Text('Error al cargar');
+                          } else {
+                            final totalActivos = snapshot.data ?? 0.00;
+                            return Text(
+                              '\$ ${totalActivos.toStringAsFixed(2)}',
+                              style: TextStyle(fontSize: isTablet ? 24 : 20, fontWeight: FontWeight.bold),
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 16),
-
-          const Divider(
+          SizedBox(height: screenHeight * 0.02),
+          Divider(
             color: Colors.grey,
             thickness: 2,
-            indent: 40,
-            endIndent: 40,
+            indent: screenWidth * 0.1,
+            endIndent: screenWidth * 0.1,
           ),
-
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(screenWidth * 0.04),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Gastos",
-                        style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 4),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {  
-                      },
-                      child: const Text(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Gastos",
+                      style: TextStyle(fontSize: isTablet ? 30 : 25, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                SizedBox(width: screenWidth * 0.01),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {},
+                      child: Text(
                         "Ver todos",
-                        style: 
-                        TextStyle(
+                        style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
-                          fontSize: 20,
+                          fontSize: isTablet ? 22 : 20,
                           decoration: TextDecoration.underline,
                           decorationThickness: 2,
                         ),
@@ -225,21 +228,18 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
-
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04),
             child: Row(
               children: [
                 Text(
                   _obtenerMesAnioActual(),
-                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey, fontSize: isTablet ? 18 : 16),
                 ),
               ],
             ),
           ),
-
-        //Lista de los gastos
-        Expanded( 
+          Expanded(
             child: FutureBuilder<List<Map<String, dynamic>>>(
               future: PInicialQueries.getListaGastosDelMesActual(),
               builder: (context, snapshot) {
@@ -277,44 +277,57 @@ class _MyHomePageState extends State<MyHomePage> {
                           break;
                         case 'auto':
                           iconoNombre = "assets/auto.svg";
+                          break;
                         case 'comunicacion':
                           iconoNombre = "assets/comunicacion.svg";
+                          break;
                         case 'deporte':
                           iconoNombre = "assets/deporte.svg";
+                          break;
                         case 'eletronica':
                           iconoNombre = "assets/electronica.svg";
+                          break;
                         case 'entretenimiento':
                           iconoNombre = "assets/entretenimiento.svg";
+                          break;
                         case 'hijos':
                           iconoNombre = "assets/hijos.svg";
+                          break;
                         case 'mascota':
                           iconoNombre = "assets/mascota.svg";
+                          break;
                         case 'regalo':
                           iconoNombre = "assets/regalo.svg";
+                          break;
                         case 'reparaciones':
                           iconoNombre = "assets/reparaciones.svg";
+                          break;
                         case 'ropa':
                           iconoNombre = "assets/ropa.svg";
+                          break;
                         case 'salud':
                           iconoNombre = "assets/salud.svg";
+                          break;
                         case 'trabajo':
                           iconoNombre = "assets/trabajo.svg";
+                          break;
                         case 'viaje':
                           iconoNombre = "assets/viaje.svg";
+                          break;
                         default:
                           iconoNombre = 'assets/otro.svg';
                           break;
                       }
                       return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 8.0),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: screenWidth * 0.04, vertical: screenHeight * 0.01),
                         child: Row(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(right: 16.0),
+                              padding: EdgeInsets.only(right: screenWidth * 0.04),
                               child: SizedBox(
-                                height: 30, // Ajusta el tamaño del contenedor del icono
-                                width: 30,
+                                height: isTablet ? 40 : 30,
+                                width: isTablet ? 40 : 30,
                                 child: iconoNombre.endsWith('.svg')
                                     ? SvgPicture.asset(
                                         iconoNombre,
@@ -323,7 +336,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         ? Image.asset(
                                             iconoNombre,
                                           )
-                                        : const Icon(Icons.category, color: Colors.grey)), // Icono por defecto si no hay imagen
+                                        : const Icon(Icons.category, color: Colors.grey)),
                               ),
                             ),
                             Expanded(
@@ -332,19 +345,18 @@ class _MyHomePageState extends State<MyHomePage> {
                                 children: [
                                   Text(
                                     gasto['nom_gasto'] ?? 'Gasto',
-                                    style:
-                                        const TextStyle(fontWeight: FontWeight.bold),
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: isTablet ? 18 : 16),
                                   ),
                                   Text(
-                                    gasto['desc_gasto'] ?? 'Descripción del gasto', // Asegúrate de que 'desc_gasto' esté disponible
-                                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                                    gasto['desc_gasto'] ?? 'Descripción del gasto',
+                                    style: TextStyle(color: Colors.grey, fontSize: isTablet ? 14 : 12),
                                   )
                                 ],
                               ),
                             ),
                             Text(
                               '\$${(gasto['monto_gasto'] as double).toStringAsFixed(2)}',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: isTablet ? 18 : 16),
                             ),
                           ],
                         ),
@@ -355,36 +367,56 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
           ),
-          const SizedBox(height: 60),
-          Padding( // Nueva Row para los botones inferiores
-            padding: const EdgeInsets.all(16.0),
+          Padding(
+            padding: EdgeInsets.all(screenWidth * 0.04),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ElevatedButton(
-                  onPressed: () {
-                    // Lógica para actualizar la lista
-                    setState(() {
-                      _gastosMesActual = PInicialQueries.getTotalGastosMesActual();
-                      _ingresoMesActual = PInicialQueries.getTotalIngresosMesActual();
-                    });
-                  },
-                  child: const Text('Actualizar'),
+                  onPressed: () {},
+                  child: Text('Gestionar ingresos', style: TextStyle(fontSize: isTablet ? 18 : 16)),
                 ),
-                FloatingActionButton(
-                  onPressed: () {
-                    setState(() {
-                      _mostrarBotonesFlotantes = !_mostrarBotonesFlotantes;
-                    });
-                  },
-                  child: const Icon(Icons.add), // Usamos el icono de "add" que se parece a una cruz al rotarlo
-                ),
+                SizedBox(width: screenWidth * 0.05),
               ],
             ),
           ),
-          const SizedBox(height: 60),
         ],
       ),
+      floatingActionButton: Stack(
+        alignment: Alignment.bottomRight,
+        children: [
+          if (_mostrarBotonesFlotantes)
+            Padding(
+              padding: EdgeInsets.only(bottom: screenHeight * 0.09, right: screenWidth * 0.02),
+              child: FloatingActionButton.extended(
+                heroTag: 'ingresoBtn',
+                onPressed: () {},
+                label: Text('Ingreso', style: TextStyle(fontSize: isTablet ? 18 : 16)),
+                icon: const Icon(Icons.arrow_upward),
+              ),
+            ),
+          if (_mostrarBotonesFlotantes)
+            Padding(
+              padding: EdgeInsets.only(bottom: screenHeight * 0.18, right: screenWidth * 0.02),
+              child: FloatingActionButton.extended(
+                heroTag: 'gastoBtn',
+                onPressed: () {},
+                label: Text('Gastos', style: TextStyle(fontSize: isTablet ? 18 : 16)),
+                icon: const Icon(Icons.arrow_downward),
+              ),
+            ),
+          FloatingActionButton(
+            heroTag: 'toggleBtn',
+            onPressed: () {
+              setState(() {
+                _mostrarBotonesFlotantes = !_mostrarBotonesFlotantes;
+              });
+            },
+            child: Icon(_mostrarBotonesFlotantes ? Icons.close : Icons.add, size: isTablet ? 30 : 24),
+          ),
+        ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
