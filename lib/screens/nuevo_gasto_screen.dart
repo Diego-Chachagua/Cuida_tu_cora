@@ -1,8 +1,7 @@
-// ignore_for_file: prefer_const_constructors_in_immutables, prefer_final_fields, sort_child_properties_last
-
 import 'package:flutter/material.dart';
 import 'package:cuida_tu_cora/database/gasto_app.dart';
-import 'package:cuida_tu_cora/database/bd_nuevogasto.dart'; // Importa tu nuevo helper
+import 'package:cuida_tu_cora/database/bd_nuevogasto.dart';
+import 'package:flutter_svg/flutter_svg.dart'; // Importa flutter_svg
 
 class NuevoGastoScreen extends StatefulWidget {
   NuevoGastoScreen({super.key});
@@ -83,9 +82,46 @@ class _NuevoGastoScreenState extends State<NuevoGastoScreen> {
                     ),
                     value: _categoriaSeleccionada,
                     items: _categorias.map((String categoria) {
+                      String iconName = '';
+                      if (categoria == 'Comida') {
+                        iconName = 'comida.svg';
+                      } else if (categoria == 'Educación') {
+                        iconName = 'educacion.svg';
+                      } else if (categoria == 'Medicina') {
+                        iconName = 'salud.svg';
+                      } else if (categoria == 'Citas médicas') {
+                        iconName = 'salud.svg';
+                      } else if (categoria == 'Servicio de Agua') {
+                        iconName = 'servicio_agua.svg';
+                      } else if (categoria == 'Servicio de Luz') {
+                        iconName = 'servicio_luz.svg';
+                      } else if (categoria == 'Internet') {
+                        iconName = 'internet.svg';
+                      } else if (categoria == 'Viajes') {
+                        iconName = 'viaje.svg';
+                      } else if (categoria == 'Vacaciones') {
+                        iconName = 'viaje.svg';
+                      } else if (categoria == 'Trabajo') {
+                        iconName = 'trabajo.svg';
+                      } else if (categoria == 'Transporte') {
+                        iconName = 'transporte.svg';
+                      } else {
+                        iconName = 'otros.svg';
+                      }
+
                       return DropdownMenuItem<String>(
                         value: categoria,
-                        child: Text(categoria),
+                        child: Row(
+                          children: <Widget>[
+                            SvgPicture.asset(
+                              'assets/$iconName',
+                              height: 24,
+                              width: 24,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(categoria),
+                          ],
+                        ),
                       );
                     }).toList(),
                     onChanged: (String? newValue) {
@@ -157,9 +193,9 @@ class _NuevoGastoScreenState extends State<NuevoGastoScreen> {
               onPressed: () async {
                 print('Guardar presionado');
                 if (_categoriaSeleccionada != null) {
-                  Map<String, dynamic>? categoriaData = _categoriasDB.firstWhere(
+                  final categoriaData = _categoriasDB.firstWhere(
                     (cat) => cat['nom_categoria'] == _categoriaSeleccionada,
-                    orElse: () => <String, dynamic>{}, // Devuelve un mapa vacío si no se encuentra
+                    orElse: () => <String, dynamic>{},
                   );
                   int? categoriaId = categoriaData.isNotEmpty ? categoriaData['id_categoria'] as int? : null;
                   double? monto = double.tryParse(_montoController.text);
