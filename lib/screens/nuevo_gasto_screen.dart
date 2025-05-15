@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:cuida_tu_cora/database/bd_nuevogasto.dart'; // Importa tu nuevo helper
+import 'package:flutter_svg/flutter_svg.dart'; // Importa flutter_svg
 
 class NuevoGastoScreen extends StatefulWidget {
   NuevoGastoScreen({super.key});
@@ -107,9 +108,68 @@ class _NuevoGastoScreenState extends State<NuevoGastoScreen> {
                     ),
                     value: _categoriaSeleccionada,
                     items: _categorias.map((String categoria) {
+                      String iconName = '';
+                      if (categoria == 'Comida') {
+                        iconName = 'comida.svg';
+                      } else if (categoria == 'Educación') {
+                        iconName = 'educacion.svg';
+                      } else if (categoria == 'Medicina') {
+                        iconName = 'salud.svg';
+                      } else if (categoria == 'Citas médicas') {
+                        iconName = 'salud.svg';
+                      } else if (categoria == 'Agua') {
+                        iconName = 'servicio_agua.svg';
+                      } else if (categoria == 'Luz') {
+                        iconName = 'servicio_luz.svg';
+                      } else if (categoria == 'Internet') {
+                        iconName = 'internet.svg';
+                      } else if (categoria == 'Viaje') {
+                        iconName = 'viaje.svg';
+                      } else if (categoria == 'Vacaciones') {
+                        iconName = 'viaje.svg';
+                      } else if (categoria == 'Trabajo') {
+                        iconName = 'trabajo.svg';
+                      } else if (categoria == 'Transporte') {
+                        iconName = 'transporte.svg';
+                      } else if (categoria == 'Auto') {
+                        iconName = 'auto.svg';
+                      } else if (categoria == 'Comunicación') {
+                        iconName = 'comunicacion.svg';
+                      } else if (categoria == 'Deporte') {
+                        iconName = 'deporte.svg';
+                      } else if (categoria == 'Electrónica') {
+                        iconName = 'eletronica.svg';
+                      } else if (categoria == 'Entretenimiento') {
+                        iconName = 'entretenimiento.svg';
+                      } else if (categoria == 'Hijos') {
+                        iconName = 'hijos.svg';
+                      } else if (categoria == 'Mascota') {
+                        iconName = 'mascota.svg';
+                      } else if (categoria == 'Regalo') {
+                        iconName = 'regalo.svg';
+                      } else if (categoria == 'Reparaciones') {
+                        iconName = 'reparaciones.svg';
+                      } else if (categoria == 'Ropa') {
+                        iconName = 'ropa.svg';
+                      } else if (categoria == 'Salud') {
+                        iconName = 'salud.svg';
+                      } else {
+                        iconName = 'otros.svg';
+                      }
+
                       return DropdownMenuItem<String>(
                         value: categoria,
-                        child: Text(categoria),
+                        child: Row(
+                          children: <Widget>[
+                            SvgPicture.asset(
+                              'assets/$iconName',
+                              height: 24,
+                              width: 24,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(categoria),
+                          ],
+                        ),
                       );
                     }).toList(),
                     onChanged: (String? newValue) {
@@ -140,7 +200,7 @@ class _NuevoGastoScreenState extends State<NuevoGastoScreen> {
                   const SizedBox(height: 8),
                   TextField(
                     controller: _montoController,
-                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
                       labelText: 'Monto',
@@ -184,7 +244,7 @@ class _NuevoGastoScreenState extends State<NuevoGastoScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30), // Espacio adicional antes del botón Guardar
             ElevatedButton(
               onPressed: () async {
                 if (_validarCampos()) {
@@ -265,19 +325,6 @@ class _NuevoGastoScreenState extends State<NuevoGastoScreen> {
                 'Guardar',
                 style: TextStyle(color: Colors.white),
               ),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () async {
-                List<Map<String, dynamic>> gastos = await NuevoGastoDBHelper.obtenerTodosLosGastos();
-                print('----- TODOS LOS GASTOS -----');
-                for (var gasto in gastos) {
-                  print(gasto);
-                }
-                print('----------------------------');
-              },
-              child: const Text('Mostrar Gastos', style: TextStyle(color: Colors.white)),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
             ),
           ],
         ),
