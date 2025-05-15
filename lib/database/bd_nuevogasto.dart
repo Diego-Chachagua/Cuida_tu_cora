@@ -2,11 +2,10 @@ import 'gasto_app.dart'; // Importa tu DBProvider
 
 class NuevoGastoDBHelper {
   static Future<int> nuevoGasto(
-      int idCategoria, String nombre, String? descripcion, double monto, DateTime fecha) async {
+      int idCategoria, String? descripcion, double monto, DateTime fecha) async {
     final db = await DBProvider.database;
     final res = await db.insert('Gastos', {
       'id_categoria': idCategoria,
-      'nom_gasto': nombre,
       'desc_gasto': descripcion,
       'monto_gasto': monto,
       'fecha_gasto': fecha.toIso8601String().split('T').first,
