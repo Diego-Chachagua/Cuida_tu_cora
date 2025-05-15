@@ -417,7 +417,14 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: EdgeInsets.only(bottom: screenHeight * 0.09, right: screenWidth * 0.02),
               child: FloatingActionButton.extended(
                 heroTag: 'ingresoBtn',
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => NuevoIngresoScreen()),
+                  ).then((_) {
+                    _cargarDatos();
+                  });
+                },
                 label: Text('Ingreso', style: TextStyle(fontSize: isTablet ? 18 : 16)),
                 icon: const Icon(Icons.arrow_upward),
               ),
@@ -432,7 +439,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     context,
                     MaterialPageRoute(builder: (context) => NuevoGastoScreen()),
                   ).then((_) {
-                    // Este código se ejecutará cuando regreses de NuevoGastoScreen
                     _cargarDatos();
                   });
                 },
