@@ -16,7 +16,7 @@ class DBProvider {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 1, // Volvemos a la versión 1
       onCreate: _onCreate,
     );
   }
@@ -42,7 +42,6 @@ class DBProvider {
       CREATE TABLE Gastos (
         id_gasto INTEGER PRIMARY KEY NOT NULL,
         id_categoria INTEGER NOT NULL,
-        nom_gasto VARCHAR(50) NOT NULL,
         desc_gasto VARCHAR(255),
         monto_gasto REAL NOT NULL,
         fecha_gasto DATE NOT NULL,
@@ -54,7 +53,6 @@ class DBProvider {
       CREATE TABLE Ingresos (
         id_ingreso INTEGER PRIMARY KEY NOT NULL,
         id_categoria INTEGER NOT NULL,
-        nom_ingreso VARCHAR(50) NOT NULL,
         desc_ingreso VARCHAR(255),
         monto_ingreso REAL NOT NULL,
         fecha_ingreso DATE NOT NULL,
@@ -71,92 +69,105 @@ class DBProvider {
     await db.insert('Categoria', {'id_categoria': 2, 'id_tipo': 2, 'nom_categoria': 'Educación'});
     await db.insert('Categoria', {'id_categoria': 3, 'id_tipo': 2, 'nom_categoria': 'Medicina'});
     await db.insert('Categoria', {'id_categoria': 4, 'id_tipo': 2, 'nom_categoria': 'Citas médicas'});
-    await db.insert('Categoria', {'id_categoria': 5, 'id_tipo': 2, 'nom_categoria': 'Servicio de Agua'});
-    await db.insert('Categoria', {'id_categoria': 6, 'id_tipo': 2, 'nom_categoria': 'Servicio de Luz'});
+    await db.insert('Categoria', {'id_categoria': 5, 'id_tipo': 2, 'nom_categoria': 'Agua'});
+    await db.insert('Categoria', {'id_categoria': 6, 'id_tipo': 2, 'nom_categoria': 'Luz'});
     await db.insert('Categoria', {'id_categoria': 7, 'id_tipo': 2, 'nom_categoria': 'Internet'});
-    await db.insert('Categoria', {'id_categoria': 8, 'id_tipo': 2, 'nom_categoria': 'Viajes'});
+    await db.insert('Categoria', {'id_categoria': 8, 'id_tipo': 2, 'nom_categoria': 'Viaje'});
     await db.insert('Categoria', {'id_categoria': 9, 'id_tipo': 2, 'nom_categoria': 'Vacaciones'});
     await db.insert('Categoria', {'id_categoria': 10, 'id_tipo': 2, 'nom_categoria': 'Trabajo'});
     await db.insert('Categoria', {'id_categoria': 11, 'id_tipo': 2, 'nom_categoria': 'Transporte'});
+    await db.insert('Categoria', {'id_categoria': 12, 'id_tipo': 2, 'nom_categoria': 'Auto'});
+    await db.insert('Categoria', {'id_categoria': 13, 'id_tipo': 2, 'nom_categoria': 'Comunicación'});
+    await db.insert('Categoria', {'id_categoria': 14, 'id_tipo': 2, 'nom_categoria': 'Deporte'});
+    await db.insert('Categoria', {'id_categoria': 15, 'id_tipo': 2, 'nom_categoria': 'Electrónica'});
+    await db.insert('Categoria', {'id_categoria': 16, 'id_tipo': 2, 'nom_categoria': 'Entretenimiento'});
+    await db.insert('Categoria', {'id_categoria': 17, 'id_tipo': 2, 'nom_categoria': 'Hijos'});
+    await db.insert('Categoria', {'id_categoria': 18, 'id_tipo': 2, 'nom_categoria': 'Mascota'});
+    await db.insert('Categoria', {'id_categoria': 19, 'id_tipo': 2, 'nom_categoria': 'Regalo'});
+    await db.insert('Categoria', {'id_categoria': 20, 'id_tipo': 2, 'nom_categoria': 'Reparaciones'});
+    await db.insert('Categoria', {'id_categoria': 21, 'id_tipo': 2, 'nom_categoria': 'Ropa'});
+    await db.insert('Categoria', {'id_categoria': 22, 'id_tipo': 2, 'nom_categoria': 'Salud'});
 
-    // Insertar los gastos con sus montos
+    // Insertar categorías relacionadas con Ingresos
+    await db.insert('Categoria', {'id_categoria': 23, 'id_tipo': 1, 'nom_categoria': 'Salario'});
+    await db.insert('Categoria', {'id_categoria': 24, 'id_tipo': 1, 'nom_categoria': 'Inversiones'});
+    await db.insert('Categoria', {'id_categoria': 25, 'id_tipo': 1, 'nom_categoria': 'Otros Ingresos'});
+
+    // Insertar los gastos con sus montos (usando id_categoria ahora)
     await db.insert('Gastos', {
       'id_categoria': 1, // Comida
-      'nom_gasto': 'Comida',
+      'desc_gasto': 'Almuerzo en restaurante',
       'monto_gasto': 60.00,
       'fecha_gasto': DateTime.now().toIso8601String().split('T').first
     });
 
     await db.insert('Gastos', {
       'id_categoria': 2, // Educación
-      'nom_gasto': 'Educación',
+      'desc_gasto': 'Libro de programación',
       'monto_gasto': 25.00,
       'fecha_gasto': DateTime.now().toIso8601String().split('T').first
     });
 
     await db.insert('Gastos', {
       'id_categoria': 5, // Servicio de Agua
-      'nom_gasto': 'Agua',
+      'desc_gasto': 'Recibo del mes',
       'monto_gasto': 3.00,
       'fecha_gasto': DateTime.now().toIso8601String().split('T').first
     });
 
     await db.insert('Gastos', {
       'id_categoria': 6, // Servicio de Luz
-      'nom_gasto': 'Luz',
+      'desc_gasto': 'Factura eléctrica',
       'monto_gasto': 8.60,
       'fecha_gasto': DateTime.now().toIso8601String().split('T').first
     });
 
     await db.insert('Gastos', {
       'id_categoria': 11, // Transporte
-      'nom_gasto': 'Transporte',
+      'desc_gasto': 'Pasaje de autobús',
       'monto_gasto': 25.00,
       'fecha_gasto': DateTime.now().toIso8601String().split('T').first
     });
 
     await db.insert('Gastos', {
       'id_categoria': 7, // Internet
-      'nom_gasto': 'Internet',
+      'desc_gasto': 'Mensualidad del proveedor',
       'monto_gasto': 25.00,
       'fecha_gasto': DateTime.now().toIso8601String().split('T').first
     });
 
     // Insertar un ingreso
     await db.insert('Ingresos', {
-      'id_categoria': 1, // Ingreso
-      'nom_ingreso': 'Ingreso',
+      'id_categoria': 23, // Salario
+      'desc_ingreso': 'Pago quincenal',
       'monto_ingreso': 400.00,
       'fecha_ingreso': DateTime.now().toIso8601String().split('T').first
     });
-
-    
-       
-
-  // Future<double> getTotalGastosMesActual() {} // Consulta de los gastos del mes actual
-    // Future<double> getTotalGastosMesActual() async {
-    //   final db = await database;
-    //   final List<Map<String, dynamic>> result = await db.rawQuery('''
-    //     SELECT SUM(monto_gasto) AS total_gastos
-    //     FROM Gastos
-    //     WHERE STRFTIME('%Y-%m', fecha_gasto) = STRFTIME('%Y-%m', 'now', 'localtime')
-    //   ''');
-    //   return result.isNotEmpty && result[0]['total_gastos'] != null ? result[0]['total_gastos'] as double : 0.00;
-    // }
-
-    // // Consulta de los ingresos del mes actual
-    // static Future<double> getTotalIngresosMesActual() async {
-    //   final db = await database;
-    //   final List<Map<String, dynamic>> result = await db.rawQuery('''
-    //     SELECT SUM(monto_ingreso) AS total_ingresos
-    //     FROM Ingresos
-    //     WHERE STRFTIME('%Y-%m', fecha_ingreso) = STRFTIME('%Y-%m', 'now', 'localtime')
-    //   ''');
-    //   return result.isNotEmpty && result[0]['total_ingresos'] != null ? result[0]['total_ingresos'] as double : 0.00;
-    // }
   }
 
-  static getTotalGastosMesActual() {}
+  static Future<double> getTotalGastosMesActual() async {
+    final db = await database;
+    final List<Map<String, dynamic>> result = await db.rawQuery('''
+      SELECT SUM(g.monto_gasto) AS total_gastos
+      FROM Gastos g
+      INNER JOIN Categoria c ON g.id_categoria = c.id_categoria
+      INNER JOIN Tipo_categoria tc ON c.id_tipo = tc.id_tipo
+      WHERE STRFTIME('%Y-%m', g.fecha_gasto) = STRFTIME('%Y-%m', 'now', 'localtime')
+      AND tc.nom_tipo = 'Gastos'
+    ''');
+    return result.isNotEmpty && result[0]['total_gastos'] != null ? result[0]['total_gastos'] as double : 0.00;
+  }
 
-  static getTotalIngresosMesActual() {}
+  static Future<double> getTotalIngresosMesActual() async {
+    final db = await database;
+    final List<Map<String, dynamic>> result = await db.rawQuery('''
+      SELECT SUM(i.monto_ingreso) AS total_ingresos
+      FROM Ingresos i
+      INNER JOIN Categoria c ON i.id_categoria = c.id_categoria
+      INNER JOIN Tipo_categoria tc ON c.id_tipo = tc.id_tipo
+      WHERE STRFTIME('%Y-%m', i.fecha_ingreso) = STRFTIME('%Y-%m', 'now', 'localtime')
+      AND tc.nom_tipo = 'Ingreso'
+    ''');
+    return result.isNotEmpty && result[0]['total_ingresos'] != null ? result[0]['total_ingresos'] as double : 0.00;
+  }
 }

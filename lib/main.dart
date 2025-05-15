@@ -36,9 +36,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Future<double> _gastosMesActual = PInicialQueries.getTotalGastosMesActual();
-  Future<double> _ingresoMesActual = PInicialQueries.getTotalIngresosMesActual();
+  late Future<double> _gastosMesActual;
+  late Future<double> _ingresoMesActual;
   bool _mostrarBotonesFlotantes = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarDatos();
+  }
+
+  Future<void> _cargarDatos() async {
+    setState(() {
+      _gastosMesActual = PInicialQueries.getTotalGastosMesActual();
+      _ingresoMesActual = PInicialQueries.getTotalIngresosMesActual();
+    });
+  }
 
   String _obtenerMesAnioActual() {
     final now = DateTime.now();
@@ -217,7 +230,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => GastosScreen()),
-                        );
+                        ).then((_) {
+                          // Este código se ejecutará cuando regreses de GastosScreen
+                          _cargarDatos();
+                        });
                       },
                       child: Text(
                         "Ver todos",
@@ -263,7 +279,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     itemBuilder: (context, index) {
                       final gasto = listaGastos[index];
                       String iconoNombre = "";
-                      switch (gasto['nom_gasto']?.toLowerCase()) {
+                      switch (gasto['nom_categoria']?.toLowerCase()) {
                         case 'comida':
                           iconoNombre = 'assets/comida.svg';
                           break;
@@ -312,7 +328,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         case 'ropa':
                           iconoNombre = "assets/ropa.svg";
                           break;
-                        case 'salud':
+                        case 'medicina':
                           iconoNombre = "assets/salud.svg";
                           break;
                         case 'trabajo':
@@ -321,6 +337,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         case 'viaje':
                           iconoNombre = "assets/viaje.svg";
                           break;
+                        case 'vacaciones':
+                          iconoNombre = "assets/viaje.svg";
+                         case 'citas médicas':
+                          iconoNombre = "assets/salud.svg";
                         default:
                           iconoNombre = 'assets/otro.svg';
                           break;
@@ -351,7 +371,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    gasto['nom_gasto'] ?? 'Gasto',
+                                    gasto['nom_categoria'] ?? 'Gasto',
                                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: isTablet ? 18 : 16),
                                   ),
                                   Text(
@@ -409,9 +429,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 heroTag: 'gastoBtn',
                 onPressed: () {
                   Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => NuevoGastoScreen()),
-                        );
+                    context,
+                    MaterialPageRoute(builder: (context) => NuevoGastoScreen()),
+                  ).then((_) {
+                    // Este código se ejecutará cuando regreses de NuevoGastoScreen
+                    _cargarDatos();
+                  });
                 },
                 label: Text('Gastos', style: TextStyle(fontSize: isTablet ? 18 : 16)),
                 icon: const Icon(Icons.arrow_downward),

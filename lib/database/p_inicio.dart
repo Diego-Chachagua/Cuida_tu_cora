@@ -4,7 +4,12 @@ class PInicialQueries {
   static Future<double> getTotalGastosMesActual() async {
     final db = await DBProvider.database;
     final List<Map<String, dynamic>> result = await db.rawQuery('''
-      SELECT SUM(monto_gasto) AS total_gastos FROM Gastos WHERE STRFTIME('%Y-%m', fecha_gasto) = STRFTIME('%Y-%m', 'now', 'localtime')
+      SELECT SUM(g.monto_gasto) AS total_gastos
+      FROM Gastos g
+      INNER JOIN Categoria c ON g.id_categoria = c.id_categoria
+      INNER JOIN Tipo_categoria tc ON c.id_tipo = tc.id_tipo
+      WHERE STRFTIME('%Y-%m', g.fecha_gasto) = STRFTIME('%Y-%m', 'now', 'localtime')
+      AND tc.nom_tipo = 'Gastos'
     ''');
 
     return result.isNotEmpty && result[0]['total_gastos'] != null ? result[0]['total_gastos'] as double : 0.00;
@@ -24,7 +29,15 @@ class PInicialQueries {
   static Future<List<Map<String, dynamic>>> getListaGastosDelMesActual() async {
     final db = await DBProvider.database;
     final List<Map<String, dynamic>> result = await db.rawQuery("""
-      SELECT g.fecha_gasto, g.monto_gasto, g.nom_gasto, desc_gasto FROM Gastos g WHERE STRFTIME('%Y-%m', g.fecha_gasto) = STRFTIME('%Y-%m', 'now', 'localtime') ORDER BY g.fecha_gasto DESC
+      SELECT
+        g.fecha_gasto,
+        g.monto_gasto,
+        g.desc_gasto,
+        c.nom_categoria
+      FROM Gastos g
+      INNER JOIN Categoria c ON g.id_categoria = c.id_categoria
+      WHERE STRFTIME('%Y-%m', g.fecha_gasto) = STRFTIME('%Y-%m', 'now', 'localtime')
+      ORDER BY g.fecha_gasto DESC
     """);
     return result;
   }

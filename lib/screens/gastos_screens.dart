@@ -22,75 +22,85 @@ class _GastosScreenState extends State<GastosScreen> {
 
   Future<List<GastoItem>> _cargarGastos() async {
     final db = await DBProvider.database;
-    final List<Map<String, dynamic>> gastosData = await db.query('Gastos');
+    final List<Map<String, dynamic>> gastosData = await db.rawQuery("""
+      SELECT
+        g.id_gasto,
+        g.desc_gasto,
+        g.monto_gasto,
+        g.fecha_gasto,
+        c.nom_categoria
+      FROM Gastos g
+      INNER JOIN Categoria c ON g.id_categoria = c.id_categoria
+      ORDER BY g.fecha_gasto DESC
+    """);
 
     return gastosData.map((gasto) {
       String iconoNombre = "";
-      switch (gasto['nom_gasto']?.toLowerCase()) {
+      switch (gasto['nom_categoria']?.toLowerCase()) {
         case 'comida':
           iconoNombre = 'assets/comida.svg';
-                          break;
-                        case 'educación':
-                          iconoNombre = 'assets/educacion.svg';
-                          break;
-                        case 'agua':
-                          iconoNombre = 'assets/servicio_agua.svg';
-                          break;
-                        case 'luz':
-                          iconoNombre = 'assets/servicio_luz.svg';
-                          break;
-                        case 'transporte':
-                          iconoNombre = 'assets/transporte.svg';
-                          break;
-                        case 'internet':
-                          iconoNombre = 'assets/internet.svg';
-                          break;
-                        case 'auto':
-                          iconoNombre = "assets/auto.svg";
-                          break;
-                        case 'comunicacion':
-                          iconoNombre = "assets/comunicacion.svg";
-                          break;
-                        case 'deporte':
-                          iconoNombre = "assets/deporte.svg";
-                          break;
-                        case 'eletronica':
-                          iconoNombre = "assets/electronica.svg";
-                          break;
-                        case 'entretenimiento':
-                          iconoNombre = "assets/entretenimiento.svg";
-                          break;
-                        case 'hijos':
-                          iconoNombre = "assets/hijos.svg";
-                          break;
-                        case 'mascota':
-                          iconoNombre = "assets/mascota.svg";
-                          break;
-                        case 'regalo':
-                          iconoNombre = "assets/regalo.svg";
-                          break;
-                        case 'reparaciones':
-                          iconoNombre = "assets/reparaciones.svg";
-                          break;
-                        case 'ropa':
-                          iconoNombre = "assets/ropa.svg";
-                          break;
-                        case 'salud':
-                          iconoNombre = "assets/salud.svg";
-                          break;
-                        case 'trabajo':
-                          iconoNombre = "assets/trabajo.svg";
-                          break;
-                        case 'viaje':
-                          iconoNombre = "assets/viaje.svg";
-                          break;
-                        default:
-                          iconoNombre = 'assets/otro.svg';
-                          break;
-                      }
+          break;
+        case 'educación':
+          iconoNombre = 'assets/educacion.svg';
+          break;
+        case 'agua':
+          iconoNombre = 'assets/servicio_agua.svg';
+          break;
+        case 'luz':
+          iconoNombre = 'assets/servicio_luz.svg';
+          break;
+        case 'transporte':
+          iconoNombre = 'assets/transporte.svg';
+          break;
+        case 'internet':
+          iconoNombre = 'assets/internet.svg';
+          break;
+        case 'auto':
+          iconoNombre = "assets/auto.svg";
+          break;
+        case 'comunicacion':
+          iconoNombre = "assets/comunicacion.svg";
+          break;
+        case 'deporte':
+          iconoNombre = "assets/deporte.svg";
+          break;
+        case 'eletronica':
+          iconoNombre = "assets/electronica.svg";
+          break;
+        case 'entretenimiento':
+          iconoNombre = "assets/entretenimiento.svg";
+          break;
+        case 'hijos':
+          iconoNombre = "assets/hijos.svg";
+          break;
+        case 'mascota':
+          iconoNombre = "assets/mascota.svg";
+          break;
+        case 'regalo':
+          iconoNombre = "assets/regalo.svg";
+          break;
+        case 'reparaciones':
+          iconoNombre = "assets/reparaciones.svg";
+          break;
+        case 'ropa':
+          iconoNombre = "assets/ropa.svg";
+          break;
+        case 'salud':
+          iconoNombre = "assets/salud.svg";
+          break;
+        case 'trabajo':
+          iconoNombre = "assets/trabajo.svg";
+          break;
+        case 'viaje':
+          iconoNombre = "assets/viaje.svg";
+          break;
+        default:
+          iconoNombre = 'assets/otro.svg';
+          break;
+      }
 
       return GastoItem(
-        categoria: gasto['nom_gasto'] ?? 'Gasto',
+        categoria: gasto['nom_categoria'] ?? 'Gasto',
         descripcion: gasto['desc_gasto'] ?? 'Descripción',
         monto: gasto['monto_gasto'] ?? 0.0,
         nombreIcono: iconoNombre,
@@ -208,9 +218,9 @@ class EditarGastoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Editar Gasto'),
+        title: const Text('Editar Gasto'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Pantalla para editar el gasto'),
       ),
     );
