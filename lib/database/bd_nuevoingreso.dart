@@ -2,6 +2,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:cuida_tu_cora/database/gasto_app.dart'; // Importamos para acceder a la base de datos
 
+
 class NuevoIngresoDBHelper {
   static Future<List<Map<String, dynamic>>> obtenerCategoriasDeIngreso() async {
     final db = await DBProvider.database;
@@ -13,4 +14,22 @@ class NuevoIngresoDBHelper {
     ''');
     return categorias;
   }
+
+  static Future<int> nuevoIngreso(int idCategoria, String? descripcion, double monto, DateTime fecha) async {
+    final db = await DBProvider.database;
+    final int id = await db.insert('Ingresos', {
+      'id_categoria': idCategoria,
+      'desc_ingreso': descripcion,
+      'monto_ingreso': monto,
+      'fecha_ingreso': fecha.toIso8601String(),
+    });
+    return id; // Retorna el ID del nuevo ingreso insertado
+  }
+  static Future<List<Map<String, dynamic>>> obtenerTodosLosIngresos() async {
+    final db = await DBProvider.database;
+    final List<Map<String, dynamic>> ingresos = await db.query('Ingresos');
+    return ingresos;
+  }
+
 }
+
