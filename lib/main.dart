@@ -308,8 +308,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         case 'deporte':
                           iconoNombre = "assets/deporte.svg";
                           break;
-                        case 'eletronica':
-                          iconoNombre = "assets/electronica.svg";
+                        case 'electrónica':
+                          iconoNombre = "assets/eletronica.svg";
                           break;
                         case 'entretenimiento':
                           iconoNombre = "assets/entretenimiento.svg";

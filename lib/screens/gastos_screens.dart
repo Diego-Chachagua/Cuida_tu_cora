@@ -37,6 +37,7 @@ class _GastosScreenState extends State<GastosScreen> {
 
     return gastosData.map((gasto) {
       String iconoNombre = "";
+        print("Categoría de gasto: ${gasto['nom_categoria']}"); // Agrega esta línea
       switch (gasto['nom_categoria']?.toLowerCase()) {
         case 'comida':
           iconoNombre = 'assets/comida.svg';
@@ -65,8 +66,8 @@ class _GastosScreenState extends State<GastosScreen> {
         case 'deporte':
           iconoNombre = "assets/deporte.svg";
           break;
-        case 'eletronica':
-          iconoNombre = "assets/electronica.svg";
+        case 'electrónica':
+          iconoNombre = "assets/eletronica.svg";
           break;
         case 'entretenimiento':
           iconoNombre = "assets/entretenimiento.svg";
@@ -86,7 +87,7 @@ class _GastosScreenState extends State<GastosScreen> {
         case 'ropa':
           iconoNombre = "assets/ropa.svg";
           break;
-        case 'Citas medicas':
+        case 'citas médicas':
           iconoNombre = "assets/salud.svg";
           break;
         case 'trabajo':
@@ -94,13 +95,13 @@ class _GastosScreenState extends State<GastosScreen> {
           break;
         case 'viaje':
           iconoNombre = "assets/viaje.svg";
-        case 'Vacaciones':
+        case 'vacaciones':
           iconoNombre = "assets/vacaciones.svg";
           break;
-        case 'Médicina':
+        case 'medicina':
           iconoNombre = "assets/medicina.svg";
         default:
-          iconoNombre = 'assets/otro.svg';
+          iconoNombre = 'assets/otros.svg';
           break;
       }
 
