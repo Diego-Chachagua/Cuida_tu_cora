@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cuida_tu_cora/database/p_inicio.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'screens/gastos_screens.dart';
+import 'screens/ingreso_screens.dart';
 import 'screens/nuevo_gasto_screen.dart';
 import 'screens/nuevo_ingreso_screen.dart';
 
@@ -232,7 +233,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           context,
                           MaterialPageRoute(builder: (context) => GastosScreen()),
                         ).then((_) {
-                          // Este código se ejecutará cuando regreses de GastosScreen
                           _cargarDatos();
                         });
                       },
@@ -330,7 +330,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           iconoNombre = "assets/ropa.svg";
                           break;
                         case 'medicina':
-                          iconoNombre = "assets/salud.svg";
+                          iconoNombre = "assets/medicina.svg";
                           break;
                         case 'trabajo':
                           iconoNombre = "assets/trabajo.svg";
@@ -339,7 +339,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           iconoNombre = "assets/viaje.svg";
                           break;
                         case 'vacaciones':
-                          iconoNombre = "assets/viaje.svg";
+                          iconoNombre = "assets/vacaciones.svg";
                          case 'citas médicas':
                           iconoNombre = "assets/salud.svg";
                         default:
@@ -401,7 +401,14 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => IngresosScreen()),
+                  ).then((_) {
+                    _cargarDatos();
+                  });
+                  },
                   child: Text('Gestionar ingresos', style: TextStyle(fontSize: isTablet ? 18 : 16)),
                 ),
                 SizedBox(width: screenWidth * 0.05),

@@ -16,7 +16,7 @@ class DBProvider {
 
     return await openDatabase(
       path,
-      version: 1, // Volvemos a la versión 1
+      version: 1,
       onCreate: _onCreate,
     );
   }
@@ -60,11 +60,9 @@ class DBProvider {
       );
     ''');
 
-    // Insertar los registros de Tipo_categoria (Ingreso, Gastos)
     await db.insert('Tipo_categoria', {'id_tipo': 1, 'nom_tipo': 'Ingreso'});
     await db.insert('Tipo_categoria', {'id_tipo': 2, 'nom_tipo': 'Gastos'});
 
-    // Insertar categorías relacionadas con Gastos
     await db.insert('Categoria', {'id_categoria': 1, 'id_tipo': 2, 'nom_categoria': 'Comida'});
     await db.insert('Categoria', {'id_categoria': 2, 'id_tipo': 2, 'nom_categoria': 'Educación'});
     await db.insert('Categoria', {'id_categoria': 3, 'id_tipo': 2, 'nom_categoria': 'Medicina'});
@@ -86,59 +84,58 @@ class DBProvider {
     await db.insert('Categoria', {'id_categoria': 19, 'id_tipo': 2, 'nom_categoria': 'Regalo'});
     await db.insert('Categoria', {'id_categoria': 20, 'id_tipo': 2, 'nom_categoria': 'Reparaciones'});
     await db.insert('Categoria', {'id_categoria': 21, 'id_tipo': 2, 'nom_categoria': 'Ropa'});
-    await db.insert('Categoria', {'id_categoria': 22, 'id_tipo': 2, 'nom_categoria': 'Salud'});
+    
 
-    // Insertar categorías relacionadas con Ingresos
-    await db.insert('Categoria', {'id_categoria': 23, 'id_tipo': 1, 'nom_categoria': 'Salario'});
-    await db.insert('Categoria', {'id_categoria': 24, 'id_tipo': 1, 'nom_categoria': 'Inversiones'});
-    await db.insert('Categoria', {'id_categoria': 25, 'id_tipo': 1, 'nom_categoria': 'Otros Ingresos'});
+    
+    await db.insert('Categoria', {'id_categoria': 22, 'id_tipo': 1, 'nom_categoria': 'Salario'});
+    await db.insert('Categoria', {'id_categoria': 23, 'id_tipo': 1, 'nom_categoria': 'Inversiones'});
+    await db.insert('Categoria', {'id_categoria': 24, 'id_tipo': 1, 'nom_categoria': 'Otros Ingresos'});
 
-    // Insertar los gastos con sus montos (usando id_categoria ahora)
     await db.insert('Gastos', {
-      'id_categoria': 1, // Comida
+      'id_categoria': 1,
       'desc_gasto': 'Almuerzo en restaurante',
       'monto_gasto': 60.00,
       'fecha_gasto': DateTime.now().toIso8601String().split('T').first
     });
 
     await db.insert('Gastos', {
-      'id_categoria': 2, // Educación
+      'id_categoria': 2,
       'desc_gasto': 'Libro de programación',
       'monto_gasto': 25.00,
       'fecha_gasto': DateTime.now().toIso8601String().split('T').first
     });
 
     await db.insert('Gastos', {
-      'id_categoria': 5, // Servicio de Agua
+      'id_categoria': 5,
       'desc_gasto': 'Recibo del mes',
       'monto_gasto': 3.00,
       'fecha_gasto': DateTime.now().toIso8601String().split('T').first
     });
 
     await db.insert('Gastos', {
-      'id_categoria': 6, // Servicio de Luz
+      'id_categoria': 6,
       'desc_gasto': 'Factura eléctrica',
       'monto_gasto': 8.60,
       'fecha_gasto': DateTime.now().toIso8601String().split('T').first
     });
 
     await db.insert('Gastos', {
-      'id_categoria': 11, // Transporte
+      'id_categoria': 11,
       'desc_gasto': 'Pasaje de autobús',
       'monto_gasto': 25.00,
       'fecha_gasto': DateTime.now().toIso8601String().split('T').first
     });
 
     await db.insert('Gastos', {
-      'id_categoria': 7, // Internet
+      'id_categoria': 7,
       'desc_gasto': 'Mensualidad del proveedor',
       'monto_gasto': 25.00,
       'fecha_gasto': DateTime.now().toIso8601String().split('T').first
     });
 
-    // Insertar un ingreso
+    
     await db.insert('Ingresos', {
-      'id_categoria': 23, // Salario
+      'id_categoria': 22,
       'desc_ingreso': 'Pago quincenal',
       'monto_ingreso': 400.00,
       'fecha_ingreso': DateTime.now().toIso8601String().split('T').first

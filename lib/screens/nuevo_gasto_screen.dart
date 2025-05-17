@@ -114,7 +114,7 @@ class _NuevoGastoScreenState extends State<NuevoGastoScreen> {
                       } else if (categoria == 'Educación') {
                         iconName = 'educacion.svg';
                       } else if (categoria == 'Medicina') {
-                        iconName = 'salud.svg';
+                        iconName = 'medicina.svg';
                       } else if (categoria == 'Citas médicas') {
                         iconName = 'salud.svg';
                       } else if (categoria == 'Agua') {
@@ -126,7 +126,7 @@ class _NuevoGastoScreenState extends State<NuevoGastoScreen> {
                       } else if (categoria == 'Viaje') {
                         iconName = 'viaje.svg';
                       } else if (categoria == 'Vacaciones') {
-                        iconName = 'viaje.svg';
+                        iconName = 'vacaciones.svg';
                       } else if (categoria == 'Trabajo') {
                         iconName = 'trabajo.svg';
                       } else if (categoria == 'Transporte') {

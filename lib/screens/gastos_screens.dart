@@ -86,7 +86,7 @@ class _GastosScreenState extends State<GastosScreen> {
         case 'ropa':
           iconoNombre = "assets/ropa.svg";
           break;
-        case 'salud':
+        case 'Citas medicas':
           iconoNombre = "assets/salud.svg";
           break;
         case 'trabajo':
@@ -94,7 +94,11 @@ class _GastosScreenState extends State<GastosScreen> {
           break;
         case 'viaje':
           iconoNombre = "assets/viaje.svg";
+        case 'Vacaciones':
+          iconoNombre = "assets/vacaciones.svg";
           break;
+        case 'Médicina':
+          iconoNombre = "assets/medicina.svg";
         default:
           iconoNombre = 'assets/otro.svg';
           break;
