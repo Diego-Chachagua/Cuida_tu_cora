@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../database/gasto_app.dart';
+import '../screens/editar_gasto_screen.dart'; // Importa la pantalla de edición
 
 class GastosScreen extends StatefulWidget {
   const GastosScreen({super.key});
@@ -100,10 +101,12 @@ class _GastosScreenState extends State<GastosScreen> {
       }
 
       return GastoItem(
+        id: gasto['id_gasto'] as int?, // Incluimos el ID
         categoria: gasto['nom_categoria'] ?? 'Gasto',
         descripcion: gasto['desc_gasto'] ?? 'Descripción',
         monto: gasto['monto_gasto'] ?? 0.0,
         nombreIcono: iconoNombre,
+        fecha: DateTime.parse(gasto['fecha_gasto'].toString()), // Convertimos la fecha
       );
     }).toList();
   }
@@ -159,12 +162,17 @@ class _GastosScreenState extends State<GastosScreen> {
 
   Widget _buildGastoItem(BuildContext context, GastoItem gasto) {
     return GestureDetector(
-      onTap: () {
-        // Navega a la pantalla de Editar Gastos
-        Navigator.push(
+      onTap: () async {
+        final result = await Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => EditarGastoScreen()),
+          MaterialPageRoute(builder: (context) => EditarGastoScreen(gasto: gasto)),
         );
+        if (result == true) {
+          // Si la pantalla de edición devolvió true (hubo cambio), recargamos los gastos
+          setState(() {
+            _gastosFuture = _cargarGastos();
+          });
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 8.0),
@@ -203,26 +211,12 @@ class _GastosScreenState extends State<GastosScreen> {
 }
 
 class GastoItem {
+  final int? id; // Añadimos el ID
   final String categoria;
   final String descripcion;
   final double monto;
   final String nombreIcono;
+  final DateTime fecha; // Añadimos la fecha
 
-  GastoItem({required this.categoria, required this.descripcion, required this.monto, required this.nombreIcono});
-}
-
-class EditarGastoScreen extends StatelessWidget {
-  const EditarGastoScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Editar Gasto'),
-      ),
-      body: const Center(
-        child: Text('Pantalla para editar el gasto'),
-      ),
-    );
-  }
+  GastoItem({this.id, required this.categoria, required this.descripcion, required this.monto, required this.nombreIcono, required this.fecha});
 }
