@@ -66,7 +66,11 @@ class EditarGastoDBHelper {
 
   static Future<List<Map<String, dynamic>>> obtenerCategoriasDeGasto() async {
     final db = await database;
-    return await db.query('Categoria');
+    return await db.query(
+      'Categoria',
+      where: 'id_tipo = ?',
+      whereArgs: [2], // 2 es el id_tipo para Gastos
+    );
   }
 
   static Future<int> actualizarGasto(int idGasto, int idCategoria, String? descGasto, double montoGasto, DateTime fechaGasto) async {

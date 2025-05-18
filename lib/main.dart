@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return formatoMesAnio;
   }
 
-  String _obtenerNombreMes(int mes) {
+  String _obtenerNombreMes(int mes) { 
     switch (mes) {
       case 1: return 'Enero';
       case 2: return 'Febrero';

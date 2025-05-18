@@ -22,6 +22,8 @@ class _GastosScreenState extends State<GastosScreen> {
   }
 
   Future<List<GastoItem>> _cargarGastos() async {
+    print("--- Cargando gastos ---"); // Aquí
+
     final db = await DBProvider.database;
     final List<Map<String, dynamic>> gastosData = await db.rawQuery("""
       SELECT
@@ -35,87 +37,46 @@ class _GastosScreenState extends State<GastosScreen> {
       ORDER BY g.fecha_gasto DESC
     """);
 
-    return gastosData.map((gasto) {
+    final List<GastoItem> gastos = gastosData.map((gasto) {
       String iconoNombre = "";
-        print("Categoría de gasto: ${gasto['nom_categoria']}"); // Agrega esta línea
       switch (gasto['nom_categoria']?.toLowerCase()) {
-        case 'comida':
-          iconoNombre = 'assets/comida.svg';
-          break;
-        case 'educación':
-          iconoNombre = 'assets/educacion.svg';
-          break;
-        case 'agua':
-          iconoNombre = 'assets/servicio_agua.svg';
-          break;
-        case 'luz':
-          iconoNombre = 'assets/servicio_luz.svg';
-          break;
-        case 'transporte':
-          iconoNombre = 'assets/transporte.svg';
-          break;
-        case 'internet':
-          iconoNombre = 'assets/internet.svg';
-          break;
-        case 'auto':
-          iconoNombre = "assets/auto.svg";
-          break;
-        case 'comunicacion':
-          iconoNombre = "assets/comunicacion.svg";
-          break;
-        case 'deporte':
-          iconoNombre = "assets/deporte.svg";
-          break;
-        case 'electrónica':
-          iconoNombre = "assets/eletronica.svg";
-          break;
-        case 'entretenimiento':
-          iconoNombre = "assets/entretenimiento.svg";
-          break;
-        case 'hijos':
-          iconoNombre = "assets/hijos.svg";
-          break;
-        case 'mascota':
-          iconoNombre = "assets/mascota.svg";
-          break;
-        case 'regalo':
-          iconoNombre = "assets/regalo.svg";
-          break;
-        case 'reparaciones':
-          iconoNombre = "assets/reparaciones.svg";
-          break;
-        case 'ropa':
-          iconoNombre = "assets/ropa.svg";
-          break;
-        case 'citas médicas':
-          iconoNombre = "assets/salud.svg";
-          break;
-        case 'trabajo':
-          iconoNombre = "assets/trabajo.svg";
-          break;
-        case 'viaje':
-          iconoNombre = "assets/viaje.svg";
-        case 'vacaciones':
-          iconoNombre = "assets/vacaciones.svg";
-          break;
-        case 'medicina':
-          iconoNombre = "assets/medicina.svg";
-        default:
-          iconoNombre = 'assets/otros.svg';
-          break;
+        case 'comida': iconoNombre = 'assets/comida.svg'; break;
+        case 'educación': iconoNombre = 'assets/educacion.svg'; break;
+        case 'agua': iconoNombre = 'assets/servicio_agua.svg'; break;
+        case 'luz': iconoNombre = 'assets/servicio_luz.svg'; break;
+        case 'transporte': iconoNombre = 'assets/transporte.svg'; break;
+        case 'internet': iconoNombre = 'assets/internet.svg'; break;
+        case 'auto': iconoNombre = "assets/auto.svg"; break;
+        case 'comunicacion': iconoNombre = "assets/comunicacion.svg"; break;
+        case 'deporte': iconoNombre = "assets/deporte.svg"; break;
+        case 'electrónica': iconoNombre = "assets/eletronica.svg"; break;
+        case 'entretenimiento': iconoNombre = "assets/entretenimiento.svg"; break;
+        case 'hijos': iconoNombre = "assets/hijos.svg"; break;
+        case 'mascota': iconoNombre = "assets/mascota.svg"; break;
+        case 'regalo': iconoNombre = "assets/regalo.svg"; break;
+        case 'reparaciones': iconoNombre = "assets/reparaciones.svg"; break;
+        case 'ropa': iconoNombre = "assets/ropa.svg"; break;
+        case 'citas médicas': iconoNombre = "assets/salud.svg"; break;
+        case 'trabajo': iconoNombre = "assets/trabajo.svg"; break;
+        case 'viaje': iconoNombre = "assets/viaje.svg"; break;
+        case 'vacaciones': iconoNombre = "assets/vacaciones.svg"; break;
+        case 'medicina': iconoNombre = "assets/medicina.svg"; break;
+        default: iconoNombre = 'assets/otros.svg'; break;
       }
 
       return GastoItem(
-        id: gasto['id_gasto'] as int?, // Incluimos el ID
+        id: gasto['id_gasto'] as int?,
         categoria: gasto['nom_categoria'] ?? 'Gasto',
         descripcion: gasto['desc_gasto'] ?? 'Descripción',
         monto: gasto['monto_gasto'] ?? 0.0,
         nombreIcono: iconoNombre,
-        fecha: DateTime.parse(gasto['fecha_gasto'].toString()), // Convertimos la fecha
+        fecha: DateTime.parse(gasto['fecha_gasto'].toString()),
       );
     }).toList();
-  }
 
+    print("--- Gastos cargados: ${gastos.length} ---"); // Aquí
+    return gastos;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

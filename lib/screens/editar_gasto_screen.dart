@@ -156,7 +156,7 @@ class _EditarGastoScreenState extends State<EditarGastoScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Gasto eliminado correctamente')),
         );
-        Navigator.pop(context);
+        Navigator.pop(context,true);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Error al eliminar el gasto')),
@@ -197,12 +197,30 @@ class _EditarGastoScreenState extends State<EditarGastoScreen> {
                   case 'comida': iconName = 'comida.svg'; break;
                   case 'educación': iconName = 'educacion.svg'; break;
                   case 'transporte': iconName = 'transporte.svg'; break;
-                  case 'servicios': iconName = 'otros.svg'; break; // Ajusta según tus iconos
-                  case 'ocio': iconName = 'entretenimiento.svg'; break; // Ajusta según tus iconos
+                  case 'servicios': iconName = 'otros.svg'; break;
+                  case 'ocio': iconName = 'entretenimiento.svg'; break;
                   case 'salud': iconName = 'salud.svg'; break;
                   case 'otros': iconName = 'otros.svg'; break;
+                  case 'medicina': iconName = 'medicina.svg'; break;
+                  case 'citas médicas': iconName = 'salud.svg'; break; // Usando el de medicina
+                  case 'agua': iconName = 'servicio_agua.svg'; break;
+                  case 'luz': iconName = 'servicio_luz.svg'; break;
+                  case 'internet': iconName = 'internet.svg'; break;
+                  case 'viaje': iconName = 'viaje.svg'; break;
+                  case 'vacaciones': iconName = 'vacaciones.svg'; break;
+                  case 'trabajo': iconName = 'trabajo.svg'; break;
+                  case 'auto': iconName = 'auto.svg'; break;
+                  case 'comunicación': iconName = 'comunicacion.svg'; break;
+                  case 'deporte': iconName = 'deporte.svg'; break;
+                  case 'electrónica': iconName = 'eletronica.svg'; break;
+                  case 'entretenimiento': iconName = 'entretenimiento.svg'; break;
+                  case 'hijos': iconName = 'hijos.svg'; break;
+                  case 'mascota': iconName = 'mascota.svg'; break;
+                  case 'regalo': iconName = 'regalo.svg'; break;
+                  case 'reparaciones': iconName = 'reparaciones.svg'; break;
+                  case 'ropa': iconName = 'ropa.svg'; break;
                   default: iconName = 'otros.svg'; break;
-                }
+}
                 return DropdownMenuItem<int>(
                   value: categoria['id_categoria'] as int?,
                   child: Row(
