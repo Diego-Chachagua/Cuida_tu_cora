@@ -47,7 +47,7 @@ class _IngresosScreenState extends State<IngresosScreen> {
             iconoNombre = 'assets/inversion.svg';
             break;
         default:
-            iconoNombre = 'assets/otro_ingreso.svg';
+            iconoNombre = 'assets/otros.svg';
             break;
         }
 
