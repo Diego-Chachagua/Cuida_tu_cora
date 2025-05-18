@@ -40,6 +40,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late Future<double> _gastosMesActual;
   late Future<double> _ingresoMesActual;
+  late Future<double> _diferenciaIngresosGastos;
   bool _mostrarBotonesFlotantes = false;
 
   @override
@@ -48,10 +49,17 @@ class _MyHomePageState extends State<MyHomePage> {
     _cargarDatos();
   }
 
+  Future<double> _calcularDiferencia() async {
+    final ingresos = await _ingresoMesActual;
+    final gastos = await _gastosMesActual;
+    return ingresos - gastos;
+  }
+
   Future<void> _cargarDatos() async {
     setState(() {
       _gastosMesActual = PInicialQueries.getTotalGastosMesActual();
       _ingresoMesActual = PInicialQueries.getTotalIngresosMesActual();
+      _diferenciaIngresosGastos = _calcularDiferencia();
     });
   }
 
@@ -176,7 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Activos",
+                        "Ingresos Totales",
                         style: TextStyle(fontSize: isTablet ? 18 : 16, color: Colors.grey, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: screenHeight * 0.005),
@@ -192,6 +200,36 @@ class _MyHomePageState extends State<MyHomePage> {
                             return Text(
                               '\$ ${totalActivos.toStringAsFixed(2)}',
                               style: TextStyle(fontSize: isTablet ? 24 : 20, fontWeight: FontWeight.bold),
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: screenWidth * 0.02),
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Diferencia",
+                        style: TextStyle(fontSize: isTablet ? 18 : 16, color: Colors.grey, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: screenHeight * 0.005),
+                      FutureBuilder<double>(
+                        future: _diferenciaIngresosGastos,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return const Text('Error al calcular');
+                          } else {
+                            final diferencia = snapshot.data ?? 0.00;
+                            final color = diferencia >= 0 ? Colors.green : Colors.red;
+                            return Text(
+                              '\$ ${diferencia.toStringAsFixed(2)}',
+                              style: TextStyle(fontSize: isTablet ? 24 : 20, fontWeight: FontWeight.bold, color: color),
                             );
                           }
                         },
