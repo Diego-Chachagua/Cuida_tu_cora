@@ -1,7 +1,9 @@
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../screens/gastos_screens.dart'; // Importa GastoItem
-import '../database/bd_editargastos.dart'; // Importa el nuevo DBHelper
+import '../screens/gastos_screens.dart';
+import '../database/bd_editargastos.dart';
 
 class EditarGastoScreen extends StatefulWidget {
   final GastoItem gasto;
@@ -37,11 +39,10 @@ class _EditarGastoScreenState extends State<EditarGastoScreen> {
     final categorias = await EditarGastoDBHelper.obtenerCategoriasDeGasto();
     setState(() {
       _categoriasGasto = categorias;
-      // Establecer el ID de la categoría seleccionada al iniciar
+      
       try {
         _categoriaIdSeleccionada = _categoriasGasto.firstWhere((cat) => cat['nom_categoria'] == widget.gasto.categoria)['id_categoria'] as int?;
       } catch (e) {
-        print("Categoría no encontrada en la lista: ${widget.gasto.categoria}");
         _categoriaIdSeleccionada = null;
       }
     });
@@ -94,11 +95,6 @@ class _EditarGastoScreenState extends State<EditarGastoScreen> {
       }
 
       if (categoriaId != null && montoActualizado != null && fechaActualizada != null) {
-        print('ID Gasto: ${widget.gasto.id}');
-        print('ID Categoría: $categoriaId');
-        print('Descripción: ${_descripcionController.text}');
-        print('Monto: $montoActualizado');
-        print('Fecha: $fechaActualizada');
         int resultado = await EditarGastoDBHelper.actualizarGasto(
           widget.gasto.id!,
           categoriaId,
@@ -192,7 +188,7 @@ class _EditarGastoScreenState extends State<EditarGastoScreen> {
               value: _categoriaIdSeleccionada,
               items: _categoriasGasto.map((categoria) {
                 String iconName = '';
-                // Mapear el nombre de la categoría al nombre del archivo SVG
+                
                 switch (categoria['nom_categoria']?.toLowerCase()) {
                   case 'comida': iconName = 'comida.svg'; break;
                   case 'educación': iconName = 'educacion.svg'; break;
@@ -202,7 +198,7 @@ class _EditarGastoScreenState extends State<EditarGastoScreen> {
                   case 'salud': iconName = 'salud.svg'; break;
                   case 'otros': iconName = 'otros.svg'; break;
                   case 'medicina': iconName = 'medicina.svg'; break;
-                  case 'citas médicas': iconName = 'salud.svg'; break; // Usando el de medicina
+                  case 'citas médicas': iconName = 'salud.svg'; break;
                   case 'agua': iconName = 'servicio_agua.svg'; break;
                   case 'luz': iconName = 'servicio_luz.svg'; break;
                   case 'internet': iconName = 'internet.svg'; break;

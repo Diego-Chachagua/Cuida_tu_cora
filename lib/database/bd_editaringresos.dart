@@ -22,7 +22,6 @@ class EditarIngresoDBHelper {
       path,
       version: 1,
       onCreate: (db, version) async {
-        // La creación de las tablas ya se manejó en gasto_app.dart
       },
     );
   }

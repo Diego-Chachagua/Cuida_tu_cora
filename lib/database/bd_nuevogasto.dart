@@ -1,4 +1,4 @@
-import 'gasto_app.dart'; // Importa tu DBProvider
+import 'gasto_app.dart';
 
 class NuevoGastoDBHelper {
   static Future<int> nuevoGasto(

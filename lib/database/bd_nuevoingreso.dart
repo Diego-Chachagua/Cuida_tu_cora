@@ -1,4 +1,4 @@
-import 'package:cuida_tu_cora/database/gasto_app.dart'; // Importamos para acceder a la base de datos
+import 'package:cuida_tu_cora/database/gasto_app.dart';
 
 
 class NuevoIngresoDBHelper {

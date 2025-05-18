@@ -1,7 +1,9 @@
+// ignore_for_file: unused_local_variable, library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../screens/ingreso_screens.dart'; // Importa IngresoItem
-import '../database/bd_editaringresos.dart'; // Importa el DBHelper de ingresos
+import '../screens/ingreso_screens.dart';
+import '../database/bd_editaringresos.dart';
 
 class EditarIngresoScreen extends StatefulWidget {
   final IngresoItem ingreso;
@@ -27,15 +29,12 @@ class _EditarIngresoScreenState extends State<EditarIngresoScreen> {
   void initState() {
     super.initState();
     _cargarCategoriasIngreso().then((_) {
-      print("Categoría del ingreso a editar: ${widget.ingreso.categoria}");
-      print("Lista de categorías cargadas:");
+
       for (var cat in _categoriasIngreso) {
-        print("- ${cat['nom_categoria']}");
       }
       try {
         _categoriaIdSeleccionada = _categoriasIngreso.firstWhere((cat) => cat['nom_categoria'] == widget.ingreso.categoria)['id_categoria'] as int?;
       } catch (e) {
-        print("Categoría no encontrada en la lista: ${widget.ingreso.categoria}");
         _categoriaIdSeleccionada = null;
       }
     });
@@ -50,7 +49,6 @@ class _EditarIngresoScreenState extends State<EditarIngresoScreen> {
     setState(() {
       _categoriasIngreso = categorias;
     });
-    print("_categoriasIngreso después de cargar: $_categoriasIngreso");
   }
 
   Future<void> _mostrarSelectorFecha(BuildContext context) async {

@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_const_constructors_in_immutables, prefer_final_fields, sort_child_properties_last
 
 import 'package:flutter/material.dart';
-import 'package:cuida_tu_cora/database/bd_nuevogasto.dart'; // Importa tu nuevo helper
-import 'package:flutter_svg/flutter_svg.dart'; // Importa flutter_svg
+import 'package:cuida_tu_cora/database/bd_nuevogasto.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class NuevoGastoScreen extends StatefulWidget {
   NuevoGastoScreen({super.key});
@@ -175,7 +175,7 @@ class _NuevoGastoScreenState extends State<NuevoGastoScreen> {
                     onChanged: (String? newValue) {
                       setState(() {
                         _categoriaSeleccionada = newValue;
-                        _categoriaError = null; // Limpiar el error al cambiar la selección
+                        _categoriaError = null;
                       });
                     },
                   ),
@@ -208,7 +208,7 @@ class _NuevoGastoScreenState extends State<NuevoGastoScreen> {
                     ),
                     onChanged: (value) {
                       setState(() {
-                        _montoError = null; // Limpiar el error al escribir
+                        _montoError = null;
                       });
                     },
                   ),
@@ -244,7 +244,7 @@ class _NuevoGastoScreenState extends State<NuevoGastoScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 30), // Espacio adicional antes del botón Guardar
+            const SizedBox(height: 30),
             ElevatedButton(
               onPressed: () async {
                 if (_validarCampos()) {

@@ -179,7 +179,7 @@ class _IngresosScreenState extends State<IngresosScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 16.0), // Espacio entre los filtros y la lista
+            const SizedBox(height: 16.0),
             Expanded(
               child: FutureBuilder<List<IngresoItem>>(
                 future: _ingresosFuture,
@@ -231,10 +231,10 @@ class _IngresosScreenState extends State<IngresosScreen> {
       onTap: () async {
         final result = await Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => EditarIngresoScreen(ingreso: ingreso)), // Necesitarás crear esta pantalla
+          MaterialPageRoute(builder: (context) => EditarIngresoScreen(ingreso: ingreso)),
         );
         if (result == true) {
-          _loadFilteredIngresos(); // Recargar la lista filtrada después de editar
+          _loadFilteredIngresos();
         }
       },
       child: Container(
