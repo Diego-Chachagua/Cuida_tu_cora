@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../database/gasto_app.dart'; 
-// import '../screens/editar_ingreso_screen.dart'; // Necesitarás crear esta pantalla
+import '../screens/editar_ingreso_screen.dart'; // Necesitarás crear esta pantalla
 
 class IngresosScreen extends StatefulWidget {
   const IngresosScreen({super.key});
@@ -37,6 +37,7 @@ class _IngresosScreenState extends State<IngresosScreen> {
     """);
 
     return ingresosData.map((ingreso) {
+      print("Categoría de ingreso: ${ingreso['nom_categoria']}");
         String iconoNombre = "";
         switch (ingreso['nom_categoria']?.toLowerCase()) {
         case 'salario':
@@ -113,16 +114,16 @@ class _IngresosScreenState extends State<IngresosScreen> {
   Widget _buildIngresoItem(BuildContext context, IngresoItem ingreso) {
     return GestureDetector(
       onTap: () async {
-        // final result = await Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => EditarIngresoScreen(ingreso: ingreso)), // Necesitarás crear esta pantalla
-        // );
-        // if (result == true) {
-        //   // Si la pantalla de edición devolvió true, recargamos los ingresos
-        //   setState(() {
-        //     _ingresosFuture = _cargarIngresos();
-        //   });
-        // }
+         final result = await Navigator.push(
+           context,
+           MaterialPageRoute(builder: (context) => EditarIngresoScreen(ingreso: ingreso)), // Necesitarás crear esta pantalla
+         );
+         if (result == true) {
+           // Si la pantalla de edición devolvió true, recargamos los ingresos
+           setState(() {
+             _ingresosFuture = _cargarIngresos();
+           });
+         }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 8.0),

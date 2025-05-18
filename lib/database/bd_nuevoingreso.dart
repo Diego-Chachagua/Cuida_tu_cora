@@ -1,5 +1,3 @@
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 import 'package:cuida_tu_cora/database/gasto_app.dart'; // Importamos para acceder a la base de datos
 
 

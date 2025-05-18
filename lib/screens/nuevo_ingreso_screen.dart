@@ -3,6 +3,8 @@ import 'package:cuida_tu_cora/database/bd_nuevoingreso.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class NuevoIngresoScreen extends StatefulWidget {
+  const NuevoIngresoScreen({super.key});
+
   @override
   _NuevoIngresoScreenState createState() => _NuevoIngresoScreenState();
 }
@@ -91,7 +93,7 @@ class _NuevoIngresoScreenState extends State<NuevoIngresoScreen> {
           );
           return;
         }
-        final int? categoriaId = categoriaData?['id_categoria'] as int?;
+        final int? categoriaId = categoriaData['id_categoria'] as int?;
         final double? monto = double.tryParse(_montoController.text);
         DateTime? fechaIngreso;
         if (_fechaController.text.isNotEmpty) {

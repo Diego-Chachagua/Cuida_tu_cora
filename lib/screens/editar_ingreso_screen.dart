@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../screens/gastos_screens.dart'; // Importa GastoItem
-import '../database/bd_editargastos.dart'; // Importa el nuevo DBHelper
+import '../screens/ingreso_screens.dart'; // Importa IngresoItem
+import '../database/bd_editaringresos.dart'; // Importa el DBHelper de ingresos
 
-class EditarGastoScreen extends StatefulWidget {
-  final GastoItem gasto;
-  const EditarGastoScreen({super.key, required this.gasto});
+class EditarIngresoScreen extends StatefulWidget {
+  final IngresoItem ingreso;
+  const EditarIngresoScreen({super.key, required this.ingreso});
 
   @override
-  _EditarGastoScreenState createState() => _EditarGastoScreenState();
+  _EditarIngresoScreenState createState() => _EditarIngresoScreenState();
 }
 
-class _EditarGastoScreenState extends State<EditarGastoScreen> {
+class _EditarIngresoScreenState extends State<EditarIngresoScreen> {
   String? _categoriaSeleccionada;
   final TextEditingController _descripcionController = TextEditingController();
   final TextEditingController _montoController = TextEditingController();
   final TextEditingController _fechaController = TextEditingController();
-  List<Map<String, dynamic>> _categoriasGasto = [];
+  List<Map<String, dynamic>> _categoriasIngreso = [];
   int? _categoriaIdSeleccionada;
 
   String? _categoriaError;
@@ -26,31 +26,37 @@ class _EditarGastoScreenState extends State<EditarGastoScreen> {
   @override
   void initState() {
     super.initState();
-    _cargarCategoriasGasto();
-    _categoriaSeleccionada = widget.gasto.categoria;
-    _descripcionController.text = widget.gasto.descripcion;
-    _montoController.text = widget.gasto.monto.toStringAsFixed(2);
-    _fechaController.text = "${widget.gasto.fecha.day}/${widget.gasto.fecha.month}/${widget.gasto.fecha.year}";
-  }
-
-  Future<void> _cargarCategoriasGasto() async {
-    final categorias = await EditarGastoDBHelper.obtenerCategoriasDeGasto();
-    setState(() {
-      _categoriasGasto = categorias;
-      // Establecer el ID de la categoría seleccionada al iniciar
+    _cargarCategoriasIngreso().then((_) {
+      print("Categoría del ingreso a editar: ${widget.ingreso.categoria}");
+      print("Lista de categorías cargadas:");
+      for (var cat in _categoriasIngreso) {
+        print("- ${cat['nom_categoria']}");
+      }
       try {
-        _categoriaIdSeleccionada = _categoriasGasto.firstWhere((cat) => cat['nom_categoria'] == widget.gasto.categoria)['id_categoria'] as int?;
+        _categoriaIdSeleccionada = _categoriasIngreso.firstWhere((cat) => cat['nom_categoria'] == widget.ingreso.categoria)['id_categoria'] as int?;
       } catch (e) {
-        print("Categoría no encontrada en la lista: ${widget.gasto.categoria}");
+        print("Categoría no encontrada en la lista: ${widget.ingreso.categoria}");
         _categoriaIdSeleccionada = null;
       }
     });
+    _categoriaSeleccionada = widget.ingreso.categoria;
+    _descripcionController.text = widget.ingreso.descripcion ?? '';
+    _montoController.text = widget.ingreso.monto.toStringAsFixed(2);
+    _fechaController.text = "${widget.ingreso.fecha.day}/${widget.ingreso.fecha.month}/${widget.ingreso.fecha.year}";
+  }
+
+  Future<void> _cargarCategoriasIngreso() async {
+    final categorias = await EditarIngresoDBHelper.obtenerCategoriasDeIngreso();
+    setState(() {
+      _categoriasIngreso = categorias;
+    });
+    print("_categoriasIngreso después de cargar: $_categoriasIngreso");
   }
 
   Future<void> _mostrarSelectorFecha(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: widget.gasto.fecha,
+      initialDate: widget.ingreso.fecha,
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
     );
@@ -80,10 +86,9 @@ class _EditarGastoScreenState extends State<EditarGastoScreen> {
     return _categoriaError == null && _montoError == null && _fechaError == null;
   }
 
-  Future<void> _actualizarGasto() async {
+ Future<void> _actualizarIngreso() async {
     if (_validarCampos()) {
-      final categoriaData = _categoriasGasto.firstWhere((cat) => cat['nom_categoria'] == _categoriaSeleccionada);
-      final int? categoriaId = categoriaData['id_categoria'] as int?;
+      int? categoriaId = _categoriaIdSeleccionada; // Usamos el ID ya seleccionado
       final double? montoActualizado = double.tryParse(_montoController.text);
       DateTime? fechaActualizada;
       if (_fechaController.text.isNotEmpty) {
@@ -94,13 +99,8 @@ class _EditarGastoScreenState extends State<EditarGastoScreen> {
       }
 
       if (categoriaId != null && montoActualizado != null && fechaActualizada != null) {
-        print('ID Gasto: ${widget.gasto.id}');
-        print('ID Categoría: $categoriaId');
-        print('Descripción: ${_descripcionController.text}');
-        print('Monto: $montoActualizado');
-        print('Fecha: $fechaActualizada');
-        int resultado = await EditarGastoDBHelper.actualizarGasto(
-          widget.gasto.id!,
+        int resultado = await EditarIngresoDBHelper.actualizarIngreso(
+          widget.ingreso.id!,
           categoriaId,
           _descripcionController.text.isNotEmpty ? _descripcionController.text : null,
           montoActualizado,
@@ -109,13 +109,14 @@ class _EditarGastoScreenState extends State<EditarGastoScreen> {
 
         if (resultado > 0) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Gasto actualizado correctamente')),
+            const SnackBar(content: Text('Ingreso actualizado correctamente')),
           );
-          Navigator.pop(context,true);
+          Navigator.pop(context, true);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Error al actualizar el gasto')),
+            const SnackBar(content: Text('Error al actualizar el ingreso')),
           );
+          Navigator.pop(context);
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -129,13 +130,13 @@ class _EditarGastoScreenState extends State<EditarGastoScreen> {
     }
   }
 
-  Future<void> _eliminarGasto() async {
+  Future<void> _eliminarIngreso() async {
     final confirmado = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Confirmar Eliminación'),
-          content: const Text('¿Estás seguro de que deseas eliminar este gasto?'),
+          content: const Text('¿Estás seguro de que deseas eliminar este ingreso?'),
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
@@ -151,16 +152,17 @@ class _EditarGastoScreenState extends State<EditarGastoScreen> {
     );
 
     if (confirmado == true) {
-      int resultado = await EditarGastoDBHelper.eliminarGasto(widget.gasto.id!);
+      int resultado = await EditarIngresoDBHelper.eliminarIngreso(widget.ingreso.id!);
       if (resultado > 0) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Gasto eliminado correctamente')),
+          const SnackBar(content: Text('Ingreso eliminado correctamente')),
         );
-        Navigator.pop(context);
+        Navigator.pop(context, true);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al eliminar el gasto')),
+          const SnackBar(content: Text('Error al eliminar el ingreso')),
         );
+        Navigator.pop(context);
       }
     }
   }
@@ -169,7 +171,7 @@ class _EditarGastoScreenState extends State<EditarGastoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Editar Gasto'),
+        title: const Text('Editar Ingreso'),
         backgroundColor: Colors.green,
       ),
       body: SingleChildScrollView(
@@ -190,17 +192,12 @@ class _EditarGastoScreenState extends State<EditarGastoScreen> {
                 errorText: _categoriaError,
               ),
               value: _categoriaIdSeleccionada,
-              items: _categoriasGasto.map((categoria) {
+              items: _categoriasIngreso.map((categoria) {
                 String iconName = '';
-                // Mapear el nombre de la categoría al nombre del archivo SVG
                 switch (categoria['nom_categoria']?.toLowerCase()) {
-                  case 'comida': iconName = 'comida.svg'; break;
-                  case 'educación': iconName = 'educacion.svg'; break;
-                  case 'transporte': iconName = 'transporte.svg'; break;
-                  case 'servicios': iconName = 'otros.svg'; break; // Ajusta según tus iconos
-                  case 'ocio': iconName = 'entretenimiento.svg'; break; // Ajusta según tus iconos
-                  case 'salud': iconName = 'salud.svg'; break;
-                  case 'otros': iconName = 'otros.svg'; break;
+                  case 'salario': iconName = 'salario.svg'; break;
+                  case 'inversiones': iconName = 'inversion.svg'; break;
+                  case 'otros ingresos': iconName = 'otros.svg'; break;
                   default: iconName = 'otros.svg'; break;
                 }
                 return DropdownMenuItem<int>(
@@ -224,7 +221,7 @@ class _EditarGastoScreenState extends State<EditarGastoScreen> {
                 setState(() {
                   _categoriaIdSeleccionada = value;
                   try {
-                    _categoriaSeleccionada = _categoriasGasto.firstWhere((cat) => cat['id_categoria'] == value)['nom_categoria'] as String?;
+                    _categoriaSeleccionada = _categoriasIngreso.firstWhere((cat) => cat['id_categoria'] == value)['nom_categoria'] as String?;
                     _categoriaError = null;
                   } catch (e) {
                     _categoriaSeleccionada = null;
@@ -302,14 +299,14 @@ class _EditarGastoScreenState extends State<EditarGastoScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
-                  onPressed: _actualizarGasto,
+                  onPressed: _actualizarIngreso,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                   ),
                   child: const Text('Actualizar', style: TextStyle(color: Colors.white)),
                 ),
                 ElevatedButton(
-                  onPressed: _eliminarGasto,
+                  onPressed: _eliminarIngreso,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
                   ),
