@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../database/gasto_app.dart'; 
-import '../screens/editar_ingreso_screen.dart'; // Necesitarás crear esta pantalla
+import '../database/gasto_app.dart';
+import '../screens/editar_ingreso_screen.dart';
 
 class IngresosScreen extends StatefulWidget {
   const IngresosScreen({super.key});
@@ -13,54 +13,91 @@ class IngresosScreen extends StatefulWidget {
 }
 
 class _IngresosScreenState extends State<IngresosScreen> {
-  late Future<List<IngresoItem>> _ingresosFuture;
+  Future<List<IngresoItem>>? _ingresosFuture;
+  int? _selectedMonth;
+  int? _selectedYear;
+  List<int> _years = [];
 
   @override
   void initState() {
     super.initState();
-    _ingresosFuture = _cargarIngresos();
+    _loadInitialData();
   }
 
-  Future<List<IngresoItem>> _cargarIngresos() async {
+  Future<void> _loadInitialData() async {
+    _years = await _getAvailableYears();
+    _selectedYear = DateTime.now().year;
+    _selectedMonth = DateTime.now().month;
+    _loadFilteredIngresos();
+  }
+
+  Future<List<int>> _getAvailableYears() async {
     final db = await DBProvider.database;
-    final List<Map<String, dynamic>> ingresosData = await db.rawQuery("""
-        SELECT
+    final List<Map<String, dynamic>> yearsData = await db.rawQuery("""
+      SELECT DISTINCT strftime('%Y', fecha_ingreso) as year
+      FROM Ingresos
+      ORDER BY year DESC
+    """);
+    return yearsData.map((y) => int.parse(y['year'] as String)).toList();
+  }
+
+  Future<List<IngresoItem>> _cargarIngresos({int? month, int? year}) async {
+    final db = await DBProvider.database;
+    String query = """
+      SELECT
         i.id_ingreso,
         i.desc_ingreso,
         i.monto_ingreso,
         i.fecha_ingreso,
         c.nom_categoria
-        FROM Ingresos i
-        INNER JOIN Categoria c ON i.id_categoria = c.id_categoria
-        -- Aquí podríamos agregar una condición para filtrar por el tipo de categoría si sabemos el id_tipo o nom_tipo para ingresos
-        ORDER BY i.fecha_ingreso DESC
-    """);
+      FROM Ingresos i
+      INNER JOIN Categoria c ON i.id_categoria = c.id_categoria
+    """;
+
+    List<dynamic> whereArgs = [];
+    if (month != null) {
+      query += " WHERE strftime('%m', i.fecha_ingreso) = ?";
+      whereArgs.add(month < 10 ? '0$month' : '$month');
+    }
+    if (year != null) {
+      query += (whereArgs.isNotEmpty ? " AND " : " WHERE ") + "strftime('%Y', i.fecha_ingreso) = ?";
+      whereArgs.add('$year');
+    }
+
+    query += " ORDER BY i.fecha_ingreso DESC";
+
+    final List<Map<String, dynamic>> ingresosData = await db.rawQuery(query, whereArgs);
 
     return ingresosData.map((ingreso) {
-      print("Categoría de ingreso: ${ingreso['nom_categoria']}");
-        String iconoNombre = "";
-        switch (ingreso['nom_categoria']?.toLowerCase()) {
+      String iconoNombre = "";
+      switch (ingreso['nom_categoria']?.toLowerCase()) {
         case 'salario':
-            iconoNombre = 'assets/salario.svg';
-            break;
+          iconoNombre = 'assets/salario.svg';
+          break;
         case 'inversiones':
-            iconoNombre = 'assets/inversion.svg';
-            break;
+          iconoNombre = 'assets/inversion.svg';
+          break;
         default:
-            iconoNombre = 'assets/otros.svg';
-            break;
-        }
+          iconoNombre = 'assets/otros.svg';
+          break;
+      }
 
-        return IngresoItem(
+      return IngresoItem(
         id: ingreso['id_ingreso'] as int?,
         categoria: ingreso['nom_categoria'] ?? 'Ingreso',
         descripcion: ingreso['desc_ingreso'] ?? 'Descripción',
         monto: ingreso['monto_ingreso'] ?? 0.0,
         nombreIcono: iconoNombre,
         fecha: DateTime.parse(ingreso['fecha_ingreso'].toString()),
-        );
+      );
     }).toList();
-    }
+  }
+
+  void _loadFilteredIngresos() {
+    setState(() {
+      _ingresosFuture = _cargarIngresos(month: _selectedMonth, year: _selectedYear);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,43 +124,118 @@ class _IngresosScreenState extends State<IngresosScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: FutureBuilder<List<IngresoItem>>(
-          future: _ingresosFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error al cargar los ingresos: ${snapshot.error}'));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(child: Text('No hay ingresos registrados.'));
-            } else {
-              final List<IngresoItem> ingresos = snapshot.data!;
-              return ListView.builder(
-                itemCount: ingresos.length,
-                itemBuilder: (context, index) {
-                  return _buildIngresoItem(context, ingresos[index]);
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField<int>(
+                    decoration: const InputDecoration(
+                      labelText: 'Mes',
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    value: _selectedMonth,
+                    items: List.generate(12, (index) {
+                      final month = index + 1;
+                      return DropdownMenuItem<int>(
+                        value: month,
+                        child: Text(_getMonthName(month)),
+                      );
+                    }),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedMonth = value;
+                        _loadFilteredIngresos();
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(width: 16.0),
+                Expanded(
+                  child: DropdownButtonFormField<int>(
+                    decoration: const InputDecoration(
+                      labelText: 'Año',
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    value: _selectedYear,
+                    items: _years.map((year) {
+                      return DropdownMenuItem<int>(
+                        value: year,
+                        child: Text(year.toString()),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedYear = value;
+                        _loadFilteredIngresos();
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16.0), // Espacio entre los filtros y la lista
+            Expanded(
+              child: FutureBuilder<List<IngresoItem>>(
+                future: _ingresosFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error al cargar los ingresos: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text('No hay ingresos registrados para el mes y año seleccionados.'));
+                  } else {
+                    final List<IngresoItem> ingresos = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: ingresos.length,
+                      itemBuilder: (context, index) {
+                        return _buildIngresoItem(context, ingresos[index]);
+                      },
+                    );
+                  }
                 },
-              );
-            }
-          },
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
+  String _getMonthName(int month) {
+    switch (month) {
+      case 1: return 'Enero';
+      case 2: return 'Febrero';
+      case 3: return 'Marzo';
+      case 4: return 'Abril';
+      case 5: return 'Mayo';
+      case 6: return 'Junio';
+      case 7: return 'Julio';
+      case 8: return 'Agosto';
+      case 9: return 'Septiembre';
+      case 10: return 'Octubre';
+      case 11: return 'Noviembre';
+      case 12: return 'Diciembre';
+      default: return '';
+    }
+  }
+
   Widget _buildIngresoItem(BuildContext context, IngresoItem ingreso) {
     return GestureDetector(
       onTap: () async {
-         final result = await Navigator.push(
-           context,
-           MaterialPageRoute(builder: (context) => EditarIngresoScreen(ingreso: ingreso)), // Necesitarás crear esta pantalla
-         );
-         if (result == true) {
-           // Si la pantalla de edición devolvió true, recargamos los ingresos
-           setState(() {
-             _ingresosFuture = _cargarIngresos();
-           });
-         }
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => EditarIngresoScreen(ingreso: ingreso)), // Necesitarás crear esta pantalla
+        );
+        if (result == true) {
+          _loadFilteredIngresos(); // Recargar la lista filtrada después de editar
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 8.0),
